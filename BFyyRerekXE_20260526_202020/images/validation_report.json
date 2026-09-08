@@ -1,0 +1,44 @@
+[
+  {
+    "page": 1,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration perfectly captures the bustling 1st-century market scene, Adam's wide-eyed wonder, and his thoughtful, questioning expression as described in the text and prompt."
+  },
+  {
+    "page": 3,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The image perfectly captures Adam's internal struggle and the older boys' confident demeanor in a classic Judean village setting, though specific gestures like shrugging and nodding are not explicitly shown."
+  },
+  {
+    "page": 4,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The image perfectly matches the setting, the boy's introspective pose and conflicted emotion, and the overall contemplative mood described in both the prompt and the text."
+  },
+  {
+    "page": 5,
+    "attempt": 1,
+    "score": 5,
+    "aligned": false,
+    "feedback": "The image depicts a historically anachronistic scene of a Jewish elder reading Paul's letter in a 1st-century synagogue, and the elder is shown holding a book instead of a scroll as specified in the prompt."
+  },
+  {
+    "page": 6,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The image perfectly captures Adam's contemplative expression and respectful posture while listening to the elder's wise words, aligning with both the visual prompt and the text's narrative."
+  },
+  {
+    "page": 10,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The illustration beautifully depicts Adam's joyful, resolute expression and light steps as he exits the synagogue at dusk, though the background city could be slightly more bustling and dazzling to match the textual emphasis on external distractions."
+  }
+]
