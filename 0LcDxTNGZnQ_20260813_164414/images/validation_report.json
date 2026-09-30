@@ -1,0 +1,79 @@
+[
+  {
+    "page": 1,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The image excellently captures Adam's contemplative mood and the specific scene of him gazing at a star-filled night sky, though the accompanying text initially describes a sunny village."
+  },
+  {
+    "page": 2,
+    "attempt": 1,
+    "score": 7,
+    "aligned": false,
+    "feedback": "While the bustling market, Adam's concerned expression, and the squabbling boys are accurately depicted, the crucial scene of a merchant overcharging a poorer customer is missing from the image."
+  },
+  {
+    "page": 3,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The image perfectly captures the setting, the grandfather's comforting presence, and Adam's serious yet receptive listening, though Adam's expression is more troubled than clearly showing a 'flicker of hope' or 'relief' as explicitly stated in the prompt and text."
+  },
+  {
+    "page": 4,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The image perfectly captures the intimate storytelling setting, Adam's engrossed expression, and the vivid imaginative overlay of the vast, shadowy army, aligning very well with both the prompt and text."
+  },
+  {
+    "page": 5,
+    "attempt": 1,
+    "score": 5,
+    "aligned": false,
+    "feedback": "Adam's expression conveys more concern than open-mouthed wonder, the grandfather is not smiling as described in the text, and the battle overlay appears to emanate from the grandfather rather than being Adam's imaginative reflection of a distant, stormy battleground."
+  },
+  {
+    "page": 6,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration perfectly captures Adam's thoughtful expression and the imaginative scene of Israelites diligently burying wrapped forms in an expansive, orderly valley under a warm, late afternoon sun, consistent with the text's somber but obedient mood."
+  },
+  {
+    "page": 7,
+    "attempt": 1,
+    "score": 7,
+    "aligned": true,
+    "feedback": "The image captures the overall mood of wonder and divine glory, but the grandfather's hand is on Adam's shoulder instead of his hair, and Adam's gaze is directed at the glowing sky rather than specifically at his grandfather with an inquiring expression."
+  },
+  {
+    "page": 8,
+    "attempt": 1,
+    "score": 4,
+    "aligned": false,
+    "feedback": "Adam and his grandfather are not looking at each other, breaking the conversational scene described, and Adam's expression appears more solemn than hopeful or warmed by the thought of Jesus' return."
+  },
+  {
+    "page": 8,
+    "attempt": 2,
+    "score": 3,
+    "aligned": false,
+    "feedback": "The image accurately depicts Adam's serious expression and the imagined radiant figure of Jesus, but critically misses the grandfather who is a central character in the accompanying text and scene prompt, meaning Adam is not interacting as described."
+  },
+  {
+    "page": 9,
+    "attempt": 1,
+    "score": 8,
+    "aligned": false,
+    "feedback": "The image accurately captures Adam's reflective mood and the serene setting, but the grandfather's expression is more contemplative than loving and encouraging, and he is not looking at Adam as specified in the prompt."
+  },
+  {
+    "page": 10,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The image successfully captures Adam's hopeful emotion, the peaceful setting, and his action of preparing to toss a stone into the stream, although he is standing in the water rather than at its edge."
+  }
+]

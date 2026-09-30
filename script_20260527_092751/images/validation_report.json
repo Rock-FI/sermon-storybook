@@ -1,0 +1,58 @@
+[
+  {
+    "page": 1,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration perfectly matches Adam's diligent work on the carved wooden bird, his hopeful and proud expression, and the vibrant ancient village setting described in the text and prompt."
+  },
+  {
+    "page": 2,
+    "attempt": 1,
+    "score": 7,
+    "aligned": true,
+    "feedback": "The image accurately portrays Adam's curiosity and the teacher's passionate, selfless demeanor in a village square, though the Korean text states 'that afternoon' while the image's lighting appears consistent with late morning."
+  },
+  {
+    "page": 3,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The illustration perfectly captures Adam's curious expression and gesture while talking to his patient father on a shaded rooftop terrace overlooking the village, aligning well with both the scene prompt and the text's description of Adam's question, though the text's 'after dinner' suggests a slightly later time than the image's clear 'warm afternoon sun'."
+  },
+  {
+    "page": 6,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The image perfectly captures the requested setting on the rooftop at night, with the father speaking gently and Adam listening intently with wide, surprised eyes, conveying a deep understanding."
+  },
+  {
+    "page": 7,
+    "attempt": 1,
+    "score": 6,
+    "aligned": false,
+    "feedback": "The image successfully conveys a thoughtful mood and peaceful night setting, but the character is not looking down at his hands as specified in the scene prompt."
+  },
+  {
+    "page": 8,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The image successfully captures the majestic, inspiring mood, Adam's expression of wonder, and the father gesturing broadly towards the starry night sky as he speaks about God's mission."
+  },
+  {
+    "page": 9,
+    "attempt": 1,
+    "score": 8,
+    "aligned": true,
+    "feedback": "The image perfectly matches the setting, object, and contemplative mood described in both the prompt and text, though Adam's expression is more pensive and slightly wistful than explicitly 'determined' or conveying a 'warmed heart' as fully as the text implies."
+  },
+  {
+    "page": 10,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The illustration beautifully captures Adam's calm, joyful, and purposeful expression, his pose, and the overall hopeful mood of a new dawn in the village, aligning well with the text, though the rising sun itself isn't directly and brightly visible in his gaze."
+  }
+]
