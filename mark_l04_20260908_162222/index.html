@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>성경 동화책 — 요한복음 3:1-16</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: #fdf6ec; color: #3a2a1a; }
+  .cover {
+    text-align: center; padding: 60px 20px;
+    background: linear-gradient(135deg, #e8d5b0, #c9a96e);
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+  }
+  .cover h1 { font-size: 2.2rem; color: #5a3010; margin-bottom: 12px; }
+  .cover p { font-size: 1.1rem; color: #7a5030; }
+  .bible-badge {
+    margin-top: 24px; padding: 10px 20px;
+    background: #fff8ee; border: 2px solid #c9a96e;
+    border-radius: 20px; font-size: 1rem; color: #5a3010;
+  }
+  .read-all-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: #5a3010; padding: 10px 20px;
+    display: flex; justify-content: center; gap: 12px; align-items: center;
+  }
+  .read-all-bar button {
+    padding: 8px 22px; border: none; border-radius: 20px;
+    font-size: 0.95rem; cursor: pointer; font-weight: bold;
+  }
+  #btn-read-all { background: #c9a96e; color: white; }
+  #btn-read-all:hover { background: #e8c080; }
+  #btn-stop { background: #fff8ee; color: #5a3010; }
+  #btn-stop:hover { background: #ffe8c0; }
+  #read-status { color: #e8d5b0; font-size: 0.85rem; }
+  .page {
+    max-width: 1100px; margin: 40px auto; padding: 20px;
+    background: #fffdf8; border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transition: box-shadow 0.3s;
+  }
+  .page.active-page {
+    box-shadow: 0 0 0 3px #c9a96e, 0 4px 24px rgba(0,0,0,0.12);
+  }
+  .page-number {
+    font-size: 0.85rem; color: #a08060; text-align: right;
+    margin-bottom: 8px;
+  }
+  /* Picture on the left, story text on the right, so a child can look and read together. */
+  .page-body { display: flex; gap: 28px; align-items: flex-start; }
+  .page-figure { flex: 1 1 50%; min-width: 0; }
+  .page-content { flex: 1 1 50%; min-width: 0; display: flex; flex-direction: column; }
+  .page img { width: 100%; border-radius: 12px; display: block; }
+  .page-text {
+    font-size: 1.15rem; line-height: 1.9;
+    color: #3a2a1a; margin-bottom: 8px; padding: 0 4px;
+  }
+  audio { width: 100%; margin-top: 12px; }
+  /* Phones and narrow tablets: stack the picture above the text instead. */
+  @media (max-width: 820px) {
+    .page { max-width: 700px; }
+    .page-body { flex-direction: column; gap: 16px; }
+  }
+  .parents-section {
+    max-width: 700px; margin: 40px auto; padding: 20px;
+  }
+  details {
+    background: #fff8ee; border: 1px solid #c9a96e;
+    border-radius: 12px; padding: 16px;
+  }
+  summary {
+    font-size: 1.1rem; font-weight: bold; color: #5a3010;
+    cursor: pointer; padding: 4px 0;
+  }
+  .parents-content {
+    margin-top: 16px; line-height: 1.9; font-size: 0.95rem;
+  }
+  .parents-content h2 {
+    font-size: 1.05rem; color: #5a3010; margin: 18px 0 6px;
+    border-bottom: 1px solid #e8d5b0; padding-bottom: 4px;
+  }
+  .parents-content p { margin-bottom: 8px; }
+  .parents-content ul { padding-left: 20px; margin-bottom: 8px; }
+  .parents-content li { margin-bottom: 4px; }
+  .songs-content { margin-top: 16px; }
+  .song-item {
+    background: #fffdf8; border: 1px solid #e8d5b0;
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 12px;
+  }
+  .song-title { font-size: 1.05rem; font-weight: bold; color: #5a3010; margin-bottom: 2px; }
+  .song-artist { font-size: 0.88rem; color: #9a7050; margin-bottom: 6px; }
+  .song-reason { font-size: 0.92rem; color: #4a3a2a; line-height: 1.6; margin-bottom: 8px; }
+  .song-youtube {
+    display: inline-block; font-size: 0.82rem; color: #c9843e;
+    text-decoration: none; border: 1px solid #c9843e;
+    border-radius: 12px; padding: 3px 10px;
+  }
+  .song-youtube:hover { background: #c9843e; color: #fff; }
+  .footer {
+    text-align: center; padding: 40px 20px;
+    font-size: 0.85rem; color: #a08060;
+    border-top: 1px solid #e8d5b0; margin-top: 40px;
+  }
+  .footer a { color: #c9a96e; }
+</style>
+</head>
+<body>
+
+<!-- 표지 -->
+<div class="cover">
+  <h1>성경 동화책</h1>
+  <p>어린이를 위한 말씀 이야기</p>
+  <div class="bible-badge">📖 요한복음 3:1-16</div>
+</div>
+
+<!-- 전체 읽어주기 바 -->
+<div class="read-all-bar">
+  <button id="btn-read-all" onclick="readAll()">▶ 전체 읽어주기</button>
+  <button id="btn-stop" onclick="stopReading()">■ 멈추기</button>
+  <span id="read-status"></span>
+</div>
+
+<script>
+// When narration mp3s exist we play those in order; otherwise we fall back to the
+// browser's built-in speech synthesis. Either way one click reads all 10 pages.
+var HAS_AUDIO = true;
+var narrations = [
+  "(\ucc28\ubd84\ud558\uace0 \uc9c4\uc9c0\ud558\uac8c) \uc608\ub8e8\uc0b4\ub818\uc758 \uace0\uc694\ud55c \ubc24, \ub192\uc740 \ud559\uc2dd\uc744 \uc9c0\ub2cc \uc9c0\ub3c4\uc790 \ub2c8\uace0\ub370\ubaa8\uac00 \ub450\ub8e8\ub9c8\ub9ac \uc131\uacbd\uc744 \ubb3c\ub044\ub7ec\ubbf8 \ubc14\ub77c\ubcf4\uace0 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \uadf8\ub294 \uc728\ubc95\uc744 \ub204\uad6c\ubcf4\ub2e4 \uc5c4\uaca9\ud558\uac8c \uc9c0\ud0a4\uba70 \uc0ac\ub78c\ub4e4\uc5d0\uac8c \ud070 \uc874\uacbd\uc744 \ubc1b\ub294 \uc778\ubb3c\uc774\uc5c8\uc2b5\ub2c8\ub2e4. \ubc31\uc131\ub4e4\uc740 \uadf8\ub97c \ucc3e\uc544\uc640 \uc9c0\ud61c\ub97c \uad6c\ud588\uace0 \uce6d\ucc2c\uc744 \uc544\ub07c\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \uadf8\ub7ec\ub098\u2026 \ub2c8\uace0\ub370\ubaa8\uc758 \ub9c8\uc74c \ud55c\uad6c\uc11d\uc5d0\ub294 \ucc44\uc6cc\uc9c0\uc9c0 \uc54a\ub294 \uae4a\uc740 \ubaa9\ub9c8\ub984\uc774 \ub298 \uc790\ub9ac \uc7a1\uace0 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \uc544\ubb34\ub9ac \uc624\ub7ab\ub3d9\uc548 \ub9d0\uc500\uc744 \uc5f0\uad6c\ud574\ub3c4 \uc601\ud63c\uc758 \ucc38\ub41c \ud3c9\uc548\uc744 \uc5bb\uc744 \uc218 \uc5c6\uc5c8\uc2b5\ub2c8\ub2e4. \ubc95\uacfc \uaddc\uce59\uc744 \uc644\ubcbd\ud558\uac8c \uc9c0\ud0a4\ub824\uace0 \uc560\uc4f8\uc218\ub85d \ub9c8\uc74c\uc740 \uc624\ud788\ub824 \ubb34\uac70\uc6cc\uc84c\uc2b5\ub2c8\ub2e4. \uadf8\ub294 \ucc45\uc0c1 \uc704\uc5d0 \ub193\uc778 \ub4f1\ubd88\uc744 \ubc14\ub77c\ubcf4\uba70\u2026 \uae4a\uc740 \uc0dd\uac01\uc5d0 \uc7a0\uacbc\uc2b5\ub2c8\ub2e4.","(\uc0dd\uac01\uc5d0 \uc7a0\uae30\ub4ef) \uc694\uc998 \uc608\ub8e8\uc0b4\ub818 \uc0ac\ub78c\ub4e4\uc758 \uc785\uc5d0\uc11c\ub294 \uc628\ud1b5 \ub098\uc0ac\ub81b \uc608\uc218\ub2d8\uc758 \uc774\uc57c\uae30\ubfd0\uc774\uc5c8\uc2b5\ub2c8\ub2e4. \uc608\uc218\ub2d8\uc774 \ud589\ud558\uc2e0 \ub180\ub77c\uc6b4 \uc77c\ub4e4\uc740 \uc0ac\ub78c\ub4e4\uc758 \uadc0\ub97c \uc758\uc2ec\ud558\uac8c \ub9cc\ub4e4\uc5c8\uc2b5\ub2c8\ub2e4. \ubcd1\ub4e0 \uc774\uac00 \ub0ab\uace0 \uc808\ub9dd\uc5d0 \ube60\uc9c4 \uc790\ub4e4\uc774 \uc0c8\ub85c\uc6b4 \ud76c\ub9dd\uc744 \uc5bb\uc5c8\uc2b5\ub2c8\ub2e4. \ub2c8\uace0\ub370\ubaa8\ub294 \uadf8 \ubaa8\ub4e0 \uc18c\uc2dd\uc744 \ud558\ub098\ud558\ub098 \ub9c8\uc74c\uc18d\uc5d0 \ub418\uc0c8\uaca8 \ubcf4\uc558\uc2b5\ub2c8\ub2e4. \ud558\ub098\ub2d8\uaed8\uc11c \ud568\uaed8\ud558\uc2dc\uc9c0 \uc54a\ub294\ub2e4\uba74\u2026 \uacb0\ucf54 \uc77c\uc5b4\ub0a0 \uc218 \uc5c6\ub294 \uae30\uc801\ub4e4\uc774 \ubd84\uba85\ud588\uc2b5\ub2c8\ub2e4. \uc608\uc218\ub2d8\uc758 \uad8c\uc704 \uc788\ub294 \uac00\ub974\uce68\uc740 \uc624\ub79c \uc138\uc6d4 \uad73\uc5b4 \uc788\ub358 \ub2c8\uace0\ub370\ubaa8\uc758 \ub9c8\uc74c\uc5d0 \uac70\uc13c \ud30c\ub3c4\ub97c \uc77c\uc73c\ucf30\uc2b5\ub2c8\ub2e4. \uadf8\ub294 \uc9c1\uc811 \uadf8\ubd84\uc744 \ub9cc\ub098\u2026 \uc774 \ud480\ub9ac\uc9c0 \uc54a\ub294 \uc758\ubb38\uc744 \ud480\uc5b4\uc57c\uaca0\ub2e4\uace0 \uacb0\uc2ec\ud588\uc2b5\ub2c8\ub2e4.","(\uae34\uc7a5\uac10 \uc788\uac8c \uc870\uc6a9\ud788) \ud558\uc9c0\ub9cc \ub2e4\ub978 \uc885\uad50 \uc9c0\ub3c4\uc790\ub4e4\uc758 \ucc28\uac00\uc6b4 \uc2dc\uc120\uc774 \ud070 \uac78\ub9bc\ub3cc\uc774\uc5c8\uc2b5\ub2c8\ub2e4. \uadf8\ub4e4\uc740 \uc608\uc218\ub2d8\uc744 \ubab9\uc2dc \uacbd\uacc4\ud558\uace0 \ubbf8\uc6cc\ud558\uace0 \uc788\uc5c8\uae30 \ub54c\ubb38\uc785\ub2c8\ub2e4. \uc874\uacbd\ubc1b\ub294 \ud559\uc790\uc600\ub358 \ub2c8\uace0\ub370\ubaa8\ub294 \ub0ae\uc5d0 \ub2f9\ub2f9\ud788 \ucc3e\uc544\uac08 \uc6a9\uae30\ub97c \ub0b4\uc9c0 \ubabb\ud588\uc2b5\ub2c8\ub2e4. \uacb0\uad6d \uadf8\ub294 \uc628 \ub3c4\uc2dc\uac00 \uae4a\uc740 \uc7a0\uc5d0 \ube60\uc9c0\uae30\ub97c \uc870\uc6a9\ud788 \uae30\ub2e4\ub838\uc2b5\ub2c8\ub2e4. \uce60\ud751\uac19\uc774 \uc5b4\ub450\uc6b4 \ud55c\ubc24\uc911\uc774 \ub418\uc790\u2026 \uac89\uc637\uc744 \uc5ec\ubbf8\uace0 \uc870\uc2ec\uc2a4\ub7fd\uac8c \uc9d1\uc744 \ub098\uc130\uc2b5\ub2c8\ub2e4. \uace8\ubaa9\uae38\ub9c8\ub2e4 \ucc28\uac00\uc6b4 \ubc24\ubc14\ub78c\uc774 \ubd88\uc5b4\uc654\uc9c0\ub9cc \uadf8\uc758 \ubc1c\uac78\uc74c\uc740 \uba48\ucd94\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \uc9c4\ub9ac\ub97c \ub9cc\ub098\uace0 \uc2f6\ub2e4\ub294 \uac04\uc808\ud55c \uc5f4\ub9dd\uc5d0\u2026 \uac00\uc2b4\uc774 \uc138\ucc28\uac8c \ub6f0\uc5c8\uc2b5\ub2c8\ub2e4.","(\uacbd\uac74\ud558\uace0 \ub530\ub73b\ud558\uac8c) \ub9c8\uce68\ub0b4 \ub2c8\uace0\ub370\ubaa8\ub294 \uc608\uc218\ub2d8\uc774 \uba38\ubb34\uc2dc\ub294 \uc870\uc6a9\ud55c \ucc98\uc18c\uc5d0 \uc774\ub974\ub800\uc2b5\ub2c8\ub2e4. \ubc29 \uc548\uc5d0\ub294 \uc740\uc740\ud55c \ub4f1\ubd88 \ud558\ub098\uac00 \uc5b4\ub460\uc744 \ubc1d\ud788\uace0 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \ub2c8\uace0\ub370\ubaa8\ub294 \ub2e8\uc815\ud558\uac8c \uc790\ub9ac\ub97c \uc7a1\uace0 \uc549\uc544 \uae4a\uc740 \uacf5\uacbd\uc758 \ub9c8\uc74c\uc744 \ub2f4\uc544 \uace0\uac1c\ub97c \uc219\uc600\uc2b5\ub2c8\ub2e4. \u300c\uc120\uc0dd\ub2d8, \uc6b0\ub9ac\ub294 \ub2f9\uc2e0\uc774 \ud558\ub098\ub2d8\uaed8\ub85c\ubd80\ud130 \uc624\uc2e0 \ucc38\ub41c \uc2a4\uc2b9\uc774\uc2ec\uc744 \uc54c\uace0 \uc788\uc2b5\ub2c8\ub2e4.\u300d \uadf8\uc758 \ubaa9\uc18c\ub9ac\ub294 \uc9c4\uc9c0\ud568\uc73c\ub85c \uac00\ub4dd \ucc28 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \u300c\ud558\ub098\ub2d8\uaed8\uc11c \ud568\uaed8\ud558\uc2dc\uc9c0 \uc54a\ub294\ub2e4\uba74, \uc120\uc0dd\ub2d8\uaed8\uc11c \ubcf4\uc5ec\uc8fc\uc2e0 \uadf8 \ub180\ub77c\uc6b4 \uae30\uc801\ub4e4\uc744 \uadf8 \ub204\uad6c\ub3c4 \ud589\ud560 \uc218 \uc5c6\uae30 \ub54c\ubb38\uc785\ub2c8\ub2e4.\u300d \ub2c8\uace0\ub370\ubaa8\ub294 \ub5a8\ub9ac\ub294 \ub9c8\uc74c\uc73c\ub85c\u2026 \uc608\uc218\ub2d8\uc758 \uc5bc\uad74\uc744 \uc62c\ub824\ub2e4\ubcf4\uc558\uc2b5\ub2c8\ub2e4.","(\uc5c4\uc219\ud558\uace0 \uad8c\uc704 \uc788\uac8c) \uc608\uc218\ub2d8\uc740 \uac89\uce58\ub808 \uc11e\uc778 \uce6d\ucc2c\uc5d0 \uba38\ubb3c\uc9c0 \uc54a\uc73c\uc2dc\uace0 \ub2c8\uace0\ub370\ubaa8\uc758 \ub9c8\uc74c \uc911\uc2ec\uc744 \uaff0\ub6ab\uc5b4 \ubcf4\uc168\uc2b5\ub2c8\ub2e4. \uadf8\ub9ac\uace0 \ub2e8\ud638\ud558\uba74\uc11c\ub3c4 \uae4a\uc740 \uc6b8\ub9bc\uc774 \uc788\ub294 \ub9d0\uc500\uc744 \uc804\ud558\uc168\uc2b5\ub2c8\ub2e4. \u300c\ub0b4\uac00 \uc9c4\uc2e4\ub85c \ub108\uc5d0\uac8c \ub9d0\ud55c\ub2e4. \ub204\uad6c\ub4e0\uc9c0 \uc0c8\ub86d\uac8c \ub2e4\uc2dc \ud0dc\uc5b4\ub098\uc9c0 \uc54a\uc73c\uba74, \ud558\ub098\ub2d8\uc758 \ub098\ub77c\ub97c \ubcfc \uc218 \uc5c6\ub2e8\ub2e4.\u300d \uc774 \ub9d0\uc500\uc740 \ud3c9\uc0dd \uc728\ubc95\uc744 \ubc30\uc6b0\uace0 \uac00\ub974\uccd0 \uc628 \ud559\uc790\uc5d0\uac8c \ucee4\ub2e4\ub780 \ucda9\uaca9\uc774\uc5c8\uc2b5\ub2c8\ub2e4. \ub2c8\uace0\ub370\ubaa8\ub294 \uc9c0\uae08\uae4c\uc9c0 \uc790\uc2e0\uc758 \uc120\ud55c \ud589\uc2e4\uacfc \ud54f\uc904\uc774 \uad6c\uc6d0\uc744 \ubcf4\uc7a5\ud55c\ub2e4\uace0 \ubbff\uc5b4\uc654\uc2b5\ub2c8\ub2e4. \uadf8\ub7ec\ub098\u2026 \uc608\uc218\ub2d8\uc740 \uc0ac\ub78c\uc758 \ub178\ub825\uacfc\ub294 \uc644\uc804\ud788 \ub2e4\ub978 \ucc28\uc6d0\uc758 \uc9c4\ub9ac\ub97c \uac00\ub9ac\ud0a4\uace0 \uacc4\uc168\uc2b5\ub2c8\ub2e4.","(\ub2f9\ud669\uc2a4\ub7fd\uace0 \uc870\uc2ec\uc2a4\ub7fd\uac8c) \ub2e4\uc2dc \ud0dc\uc5b4\ub098\uc57c \ud55c\ub2e4\ub294 \ub9d0\uc500\uc758 \ub73b\uc744 \uc54c\uc9c0 \ubabb\ud55c \ub2c8\uace0\ub370\ubaa8\ub294 \uc5b4\ub9ac\ub465\uc808\ud558\uc5ec \ub418\ubb3c\uc5c8\uc2b5\ub2c8\ub2e4. \u300c\uc0ac\ub78c\uc774 \uc774\ubbf8 \ub2e4 \uc790\ub780 \uc5b4\ub978\uc778\ub370 \uc5b4\ub5bb\uac8c \ub2e4\uc2dc \ud0dc\uc5b4\ub0a0 \uc218 \uc788\uc2b5\ub2c8\uae4c?\u300d \uadf8\ub294 \ub2f9\ud669\ud558\uc5ec \uc5c9\ub6b1\ud55c \uc0c1\uc0c1\uc744 \uaebc\ub0b4\ub193\uc558\uc2b5\ub2c8\ub2e4. \u300c\uc5b4\uba38\ub2c8\uc758 \ubc43\uc18d\uc5d0 \ub2e4\uc2dc \ub4e4\uc5b4\uac14\ub2e4\uac00 \ud0dc\uc5b4\ub09c\ub2e4\ub294 \ub9d0\uc500\uc785\ub2c8\uae4c?\u300d \uc774\uc2a4\ub77c\uc5d8\uc5d0\uc11c \uac00\uc7a5 \ub6f0\uc5b4\ub09c \ud559\uc790\uc600\uc9c0\ub9cc, \uc601\uc801\uc778 \uc2e0\ube44 \uc55e\uc5d0\uc11c\ub294 \ud55c \uba85\uc758 \ubb34\uc9c0\ud55c \uc544\uc774\uc640 \ub2e4\ub984\uc5c6\uc5c8\uc2b5\ub2c8\ub2e4. \uadf8\ub294 \ub208\uc5d0 \ubcf4\uc774\ub294 \uc721\uc2e0\uc758 \ud0c4\uc0dd\ub9cc\uc744 \uc0dd\uac01\ud558\uace0 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \uc9c4\ub9ac\uc5d0 \ub2ff\uc9c0 \ubabb\ud558\ub294 \uc790\uc2e0\uc758 \uc9c0\ud61c\uac00\u2026 \ubab9\uc2dc \ubd80\ub044\ub7fd\uace0 \ub2f5\ub2f5\ud558\uac8c \ub290\uaef4\uc84c\uc2b5\ub2c8\ub2e4.","(\uc628\ud654\ud558\uace0 \ubd84\uba85\ud558\uac8c) \uc608\uc218\ub2d8\uc740 \ud63c\ub780\uc2a4\ub7ec\uc6cc\ud558\ub294 \ub2c8\uace0\ub370\ubaa8\ub97c \ubd80\ub4dc\ub7ec\uc6b4 \ub208\ube5b\uc73c\ub85c \ubc14\ub77c\ubcf4\uba70 \ucc28\uadfc\ucc28\uadfc \uc124\uba85\ud574 \uc8fc\uc168\uc2b5\ub2c8\ub2e4. \u300c\uc0ac\ub78c\uc774 \ubb3c\uacfc \uc131\ub839\uc73c\ub85c \ud0dc\uc5b4\ub098\uc9c0 \uc54a\uc73c\uba74 \ud558\ub098\ub2d8 \ub098\ub77c\uc5d0 \ub4e4\uc5b4\uac08 \uc218 \uc5c6\ub2e8\ub2e4. \uc721\uc5d0\uc11c \ub09c \uac83\uc740 \uc721\uc77c \ubfd0\uc774\uc694, \uc601\uc73c\ub85c \ub09c \uac83\ub9cc\uc774 \ucc38\ub41c \uc601\uc774\ub780\ub2e4.\u300d \uc608\uc218\ub2d8\uc774 \ub9d0\uc500\ud558\uc2e0 \uac70\ub4ed\ub0a8\uc740 \ub0a1\uc740 \ubab8\uc758 \ud0c4\uc0dd\uc774 \uc544\ub2c8\uc5c8\uc2b5\ub2c8\ub2e4. \uadf8\uac83\uc740 \uc131\ub839\uc758 \uac70\ub8e9\ud55c \uc740\ud61c\ub85c \uc8c4\ub85c \ubb3c\ub4e0 \uad73\uc740 \ub9c8\uc74c\uc774 \uae68\ub057\uc774 \uc53b\uaca8 \uc0c8 \uc0dd\uba85\uc744 \uc5bb\ub294 \uc77c\uc774\uc5c8\uc2b5\ub2c8\ub2e4. \uac89\ubaa8\uc2b5\uc758 \ucc29\ud55c \ud589\ub3d9\uc774\ub098 \uc5c4\uaca9\ud55c \uaddc\uce59\ub9cc\uc73c\ub85c\ub294\u2026 \uacb0\ucf54 \ud558\ub098\ub2d8\uc758 \uc790\ub140\uac00 \ub420 \uc218 \uc5c6\uc5c8\uc2b5\ub2c8\ub2e4.","(\uc2e0\ube44\ub86d\uace0 \uc740\ud61c\ub86d\uac8c) \uc608\uc218\ub2d8\uc740 \uc5f4\ub9b0 \ucc3d\ubc16\uc73c\ub85c \uc2a4\uccd0 \uc9c0\ub098\uac00\ub294 \ubc24\ubc14\ub78c\uc744 \uac00\ub9ac\ud0a4\uba70 \ub367\ubd99\uc774\uc168\uc2b5\ub2c8\ub2e4. \u300c\ubc14\ub78c\uc774 \uc5b4\ub514\uc5d0\uc11c \ubd88\uc5b4\uc640 \uc5b4\ub514\ub85c \uac00\ub294\uc9c0 \ub208\uc73c\ub85c \ubcfc \uc218\ub294 \uc5c6\uc9c0\ub9cc, \ub098\ubb47\uac00\uc9c0\uac00 \ud754\ub4e4\ub9ac\ub294 \uc18c\ub9ac\ub97c \ub4e4\uc73c\uba74 \ubc14\ub78c\uc774 \ubd80\ub294 \uc904 \uc54c\uc9c0 \uc54a\ub290\ub0d0?\u300d \ucc3d\uac00\uc758 \uc78e\uc0ac\uadc0\ub4e4\uc774 \ubd80\ub4dc\ub7fd\uac8c \ud754\ub4e4\ub9ac\uace0 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \u300c\uc131\ub839\uc73c\ub85c \ud0dc\uc5b4\ub09c \ubaa8\ub4e0 \uc0ac\ub78c\ub3c4 \uc774\uc640 \uac19\ub2e8\ub2e4.\u300d \uc131\ub839\ub2d8\uc758 \uc77c\ud558\uc2ec\uc740 \uc0ac\ub78c\uc758 \ub208\uc5d0 \ub69c\ub837\uc774 \ubcf4\uc774\uc9c0 \uc54a\uc9c0\ub9cc, \uadf8 \uc740\ud61c\ub97c \ubc1b\uc740 \uc601\ud63c\uc740 \uc774\uc804\uacfc \uc804\ud600 \ub2e4\ub978 \uc0c8\ub85c\uc6b4 \uc0ac\ub78c\uc73c\ub85c \ubcc0\ud654\ub429\ub2c8\ub2e4. \ub2c8\uace0\ub370\ubaa8\ub294 \ub208\uc5d0 \ubcf4\uc774\uc9c0 \uc54a\ub294 \uc131\ub839\uc758 \ud06c\uc2e0 \ub2a5\ub825\uc744\u2026 \ub9c8\uc74c\uc73c\ub85c \ub290\ub07c\uae30 \uc2dc\uc791\ud588\uc2b5\ub2c8\ub2e4.","(\ubc85\ucc28\uc624\ub974\ub294 \uac10\ub3d9\uc73c\ub85c) \uc774\uc5b4 \uc608\uc218\ub2d8\uc740 \ub2c8\uace0\ub370\ubaa8\uc640 \uc628 \uc778\ub958\ub97c \ud5a5\ud55c \uac00\uc7a5 \uc704\ub300\ud558\uace0 \ubc85\ucc2c \uc0ac\ub791\uc758 \uc57d\uc18d\uc744 \ub4e4\ub824\uc8fc\uc168\uc2b5\ub2c8\ub2e4. \u300c\ud558\ub098\ub2d8\uc774 \uc138\uc0c1\uc744 \uc774\ucc98\ub7fc \uc0ac\ub791\ud558\uc154\uc11c \ud558\ub098\ubfd0\uc778 \uc678\uc544\ub4e4\uc744 \uc8fc\uc168\uc73c\ub2c8, \ub204\uad6c\ub4e0\uc9c0 \uadf8\ub97c \ubbff\ub294 \uc790\ub9c8\ub2e4 \uba78\ub9dd\ud558\uc9c0 \uc54a\uace0 \uc601\uc6d0\ud55c \uc0dd\uba85\uc744 \uc5bb\uc744 \uac83\uc774\ub2e4.\u300d \uad11\uc57c\uc5d0\uc11c \ub18b\ubc40\uc744 \uccd0\ub2e4\ubcf8 \uc790\ub9c8\ub2e4 \uc0b4\uc544\ub0ac\ub4ef\uc774, \uc7a5\ucc28 \uc2ed\uc790\uac00\uc5d0 \ub2ec\ub9ac\uc2e4 \uc608\uc218\ub2d8\uc744 \ubc14\ub77c\ubcf4\uace0 \ubbff\ub294 \uc790\ub294 \ub204\uad6c\ub098 \uad6c\uc6d0\uc744 \uc5bb\uac8c \ub41c\ub2e4\ub294 \ubcf5\uc74c\uc774\uc5c8\uc2b5\ub2c8\ub2e4. \ub2c8\uace0\ub370\ubaa8\ub294 \uc628\ubab8\uc5d0 \uc804\uc728\uc744 \ub290\uaf08\uc2b5\ub2c8\ub2e4. \uadf8\ud1a0\ub85d \ucc3e\uc544 \ud5e4\ub9e4\ub358 \uc0dd\uba85\uc758 \ubb38\uc774\u2026 \ubc14\ub85c \ub208\uc55e\uc758 \uc608\uc218 \uadf8\ub9ac\uc2a4\ub3c4\ub97c \ud1b5\ud574 \ud65c\uc9dd \uc5f4\ub824 \uc788\uc5c8\uc2b5\ub2c8\ub2e4.","(\uae4a\uc740 \ud3c9\uc548\uacfc \ud655\uc2e0\uc5d0 \ucc28\uc11c) \uce84\uce84\ud588\ub358 \ubc29 \uc548\uc740 \ud558\ub098\ub2d8\uc758 \ud06c\uc2e0 \uc0ac\ub791\uacfc \uc9c4\ub9ac\uc758 \ube5b\uc73c\ub85c \uac00\ub4dd \ucc44\uc6cc\uc84c\uc2b5\ub2c8\ub2e4. \ub2c8\uace0\ub370\ubaa8\uc758 \ub9c8\uc74c\uc744 \uc9d3\ub204\ub974\ub358 \uc624\ub79c \uac08\uc99d\uacfc \ub2f5\ub2f5\ud568\uc774 \ubd04\ub208 \ub179\ub4ef \uc0ac\ub77c\uc84c\uc2b5\ub2c8\ub2e4. \uad6c\uc6d0\uc740 \uc790\uc2e0\uc774 \uc313\uc544 \uc62c\ub9b0 \uc728\ubc95\uc758 \uc9c0\uc2dd\uc774\ub098 \uc5c4\uaca9\ud55c \uaddc\ub840\uc5d0 \uc788\ub294 \uac83\uc774 \uc544\ub2c8\uc5c8\uc2b5\ub2c8\ub2e4. \uc624\uc9c1 \uc8c4\uc778\uc744 \uc704\ud574 \ubaa8\ub4e0 \uac83\uc744 \ub0b4\uc5b4\uc8fc\uc2e0 \uc608\uc218\ub2d8\uc744 \ubbff\uace0, \ub9c8\uc74c\uc744 \uc0c8\ub86d\uac8c \ud558\uc2dc\ub294 \uc131\ub839\ub2d8\uc744 \uc758\uc9c0\ud558\ub294 \uac83\uc774 \ucc38\ub41c \uc0dd\uba85\uc758 \uae38\uc774\uc5c8\uc2b5\ub2c8\ub2e4. \ud55c\ubc24\uc911\uc5d0 \ucc3e\uc544\uc628 \ud559\uc790\ub294\u2026 \ub9c8\uce68\ub0b4 \uc601\uc6d0\ud55c \uc0dd\uba85\uc758 \ube5b\uc744 \ub9cc\ub0ac\uc2b5\ub2c8\ub2e4. \ub2c8\uace0\ub370\ubaa8\uc758 \uc778\uc0dd\uc5d0\uc11c\u2026 \uac00\uc7a5 \ubcf5\ub418\uace0 \uc740\ud61c\ub85c\uc6b4 \ubc24\uc774\uc5c8\uc2b5\ub2c8\ub2e4."
+];
+var TOTAL_PAGES = narrations.length;
+var currentIdx = -1;
+var reading = false;
+
+function pageElements() { return document.querySelectorAll('.page'); }
+function audioElements() { return document.querySelectorAll('.page audio'); }
+
+function clearHighlight() {
+  pageElements().forEach(function (p) { p.classList.remove('active-page'); });
+}
+
+function highlight(idx) {
+  clearHighlight();
+  var all = pageElements();
+  if (all[idx]) {
+    all[idx].classList.add('active-page');
+    all[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  document.getElementById('read-status').textContent = (idx + 1) + ' / ' + TOTAL_PAGES + ' 페이지';
+}
+
+function readAll() {
+  stopReading();
+  currentIdx = 0;
+  reading = true;
+  playCurrent();
+}
+
+function stopReading() {
+  reading = false;
+  if (HAS_AUDIO) {
+    audioElements().forEach(function (a) {
+      a.pause();
+      a.currentTime = 0;
+      a.onended = null;
+    });
+  } else if (window.speechSynthesis) {
+    speechSynthesis.cancel();
+  }
+  clearHighlight();
+  document.getElementById('read-status').textContent = '';
+}
+
+function finish() {
+  reading = false;
+  clearHighlight();
+  document.getElementById('read-status').textContent = '완료';
+}
+
+function advance() {
+  currentIdx++;
+  // A short gap between pages keeps it from sounding rushed.
+  setTimeout(playCurrent, 700);
+}
+
+function playCurrent() {
+  if (!reading) { return; }
+  if (currentIdx >= TOTAL_PAGES) { finish(); return; }
+  highlight(currentIdx);
+
+  if (HAS_AUDIO) {
+    var track = audioElements()[currentIdx];
+    if (!track) { advance(); return; }
+    track.currentTime = 0;
+    track.onended = function () { if (reading) { advance(); } };
+    var started = track.play();
+    if (started && started.catch) {
+      // Autoplay can be refused; skipping keeps the sequence moving.
+      started.catch(function () { if (reading) { advance(); } });
+    }
+  } else {
+    var u = new SpeechSynthesisUtterance(narrations[currentIdx]);
+    u.lang = 'ko-KR';
+    u.rate = 0.9;
+    u.onend = function () { if (reading) { advance(); } };
+    speechSynthesis.speak(u);
+  }
+}
+</script>
+
+<!-- 10페이지 -->
+
+<div class="page" id="page-1">
+  <div class="page-number">1 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_01.png"
+           alt="페이지 1 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">예루살렘의 고요한 밤, 높은 학식을 지닌 지도자 니고데모가 두루마리 성경을 물끄러미 바라보고 있었습니다. 그는 율법을 누구보다 엄격하게 지키며 사람들에게 큰 존경을 받는 인물이었습니다. 백성들은 그를 찾아와 지혜를 구했고 칭찬을 아끼지 않았습니다. 그러나 니고데모의 마음 한구석에는 채워지지 않는 깊은 목마름이 늘 자리 잡고 있었습니다. 아무리 오랫동안 말씀을 연구해도 영혼의 참된 평안을 얻을 수 없었습니다. 법과 규칙을 완벽하게 지키려고 애쓸수록 마음은 오히려 무거워졌습니다. 그는 책상 위에 놓인 등불을 바라보며 깊은 생각에 잠겼습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_01.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-2">
+  <div class="page-number">2 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_02.png"
+           alt="페이지 2 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">요즘 예루살렘 사람들의 입에서는 온통 나사렛 예수님의 이야기뿐이었습니다. 예수님이 행하신 놀라운 일들은 사람들의 귀를 의심하게 만들었습니다. 병든 이가 낫고 절망에 빠진 자들이 새로운 희망을 얻었습니다. 니고데모는 그 모든 소식을 하나하나 마음속에 되새겨 보았습니다. 하나님께서 함께하시지 않는다면 결코 일어날 수 없는 기적들이 분명했습니다. 예수님의 권위 있는 가르침은 오랜 세월 굳어 있던 니고데모의 마음에 거센 파도를 일으켰습니다. 그는 직접 그분을 만나 이 풀리지 않는 의문을 풀어야겠다고 결심했습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_02.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-3">
+  <div class="page-number">3 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_03.png"
+           alt="페이지 3 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">하지만 다른 종교 지도자들의 차가운 시선이 큰 걸림돌이었습니다. 그들은 예수님을 몹시 경계하고 미워하고 있었기 때문입니다. 존경받는 학자였던 니고데모는 낮에 당당히 찾아갈 용기를 내지 못했습니다. 결국 그는 온 도시가 깊은 잠에 빠지기를 조용히 기다렸습니다. 칠흑같이 어두운 한밤중이 되자 겉옷을 여미고 조심스럽게 집을 나섰습니다. 골목길마다 차가운 밤바람이 불어왔지만 그의 발걸음은 멈추지 않았습니다. 진리를 만나고 싶다는 간절한 열망에 가슴이 세차게 뛰었습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_03.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-4">
+  <div class="page-number">4 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_04.png"
+           alt="페이지 4 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">마침내 니고데모는 예수님이 머무시는 조용한 처소에 이르렀습니다. 방 안에는 은은한 등불 하나가 어둠을 밝히고 있었습니다. 니고데모는 단정하게 자리를 잡고 앉아 깊은 공경의 마음을 담아 고개를 숙였습니다. 「선생님, 우리는 당신이 하나님께로부터 오신 참된 스승이심을 알고 있습니다.」 그의 목소리는 진지함으로 가득 차 있었습니다. 「하나님께서 함께하시지 않는다면, 선생님께서 보여주신 그 놀라운 기적들을 그 누구도 행할 수 없기 때문입니다.」 니고데모는 떨리는 마음으로 예수님의 얼굴을 올려다보았습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_04.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-5">
+  <div class="page-number">5 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_05.png"
+           alt="페이지 5 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">예수님은 겉치레 섞인 칭찬에 머물지 않으시고 니고데모의 마음 중심을 꿰뚫어 보셨습니다. 그리고 단호하면서도 깊은 울림이 있는 말씀을 전하셨습니다. 「내가 진실로 너에게 말한다. 누구든지 새롭게 다시 태어나지 않으면, 하나님의 나라를 볼 수 없단다.」 이 말씀은 평생 율법을 배우고 가르쳐 온 학자에게 커다란 충격이었습니다. 니고데모는 지금까지 자신의 선한 행실과 핏줄이 구원을 보장한다고 믿어왔습니다. 그러나 예수님은 사람의 노력과는 완전히 다른 차원의 진리를 가리키고 계셨습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_05.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-6">
+  <div class="page-number">6 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_06.png"
+           alt="페이지 6 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">다시 태어나야 한다는 말씀의 뜻을 알지 못한 니고데모는 어리둥절하여 되물었습니다. 「사람이 이미 다 자란 어른인데 어떻게 다시 태어날 수 있습니까?」 그는 당황하여 엉뚱한 상상을 꺼내놓았습니다. 「어머니의 뱃속에 다시 들어갔다가 태어난다는 말씀입니까?」 이스라엘에서 가장 뛰어난 학자였지만, 영적인 신비 앞에서는 한 명의 무지한 아이와 다름없었습니다. 그는 눈에 보이는 육신의 탄생만을 생각하고 있었습니다. 진리에 닿지 못하는 자신의 지혜가 몹시 부끄럽고 답답하게 느껴졌습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_06.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-7">
+  <div class="page-number">7 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_07.png"
+           alt="페이지 7 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">예수님은 혼란스러워하는 니고데모를 부드러운 눈빛으로 바라보며 차근차근 설명해 주셨습니다. 「사람이 물과 성령으로 태어나지 않으면 하나님 나라에 들어갈 수 없단다. 육에서 난 것은 육일 뿐이요, 영으로 난 것만이 참된 영이란다.」 예수님이 말씀하신 거듭남은 낡은 몸의 탄생이 아니었습니다. 그것은 성령의 거룩한 은혜로 죄로 물든 굳은 마음이 깨끗이 씻겨 새 생명을 얻는 일이었습니다. 겉모습의 착한 행동이나 엄격한 규칙만으로는 결코 하나님의 자녀가 될 수 없었습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_07.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-8">
+  <div class="page-number">8 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_08.png"
+           alt="페이지 8 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">예수님은 열린 창밖으로 스쳐 지나가는 밤바람을 가리키며 덧붙이셨습니다. 「바람이 어디에서 불어와 어디로 가는지 눈으로 볼 수는 없지만, 나뭇가지가 흔들리는 소리를 들으면 바람이 부는 줄 알지 않느냐?」 창가의 잎사귀들이 부드럽게 흔들리고 있었습니다. 「성령으로 태어난 모든 사람도 이와 같단다.」 성령님의 일하심은 사람의 눈에 뚜렷이 보이지 않지만, 그 은혜를 받은 영혼은 이전과 전혀 다른 새로운 사람으로 변화됩니다. 니고데모는 눈에 보이지 않는 성령의 크신 능력을 마음으로 느끼기 시작했습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_08.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-9">
+  <div class="page-number">9 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_09.png"
+           alt="페이지 9 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">이어 예수님은 니고데모와 온 인류를 향한 가장 위대하고 벅찬 사랑의 약속을 들려주셨습니다. 「하나님이 세상을 이처럼 사랑하셔서 하나뿐인 외아들을 주셨으니, 누구든지 그를 믿는 자마다 멸망하지 않고 영원한 생명을 얻을 것이다.」 광야에서 놋뱀을 쳐다본 자마다 살아났듯이, 장차 십자가에 달리실 예수님을 바라보고 믿는 자는 누구나 구원을 얻게 된다는 복음이었습니다. 니고데모는 온몸에 전율을 느꼈습니다. 그토록 찾아 헤매던 생명의 문이 바로 눈앞의 예수 그리스도를 통해 활짝 열려 있었습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_09.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-10">
+  <div class="page-number">10 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_10.png"
+           alt="페이지 10 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">캄캄했던 방 안은 하나님의 크신 사랑과 진리의 빛으로 가득 채워졌습니다. 니고데모의 마음을 짓누르던 오랜 갈증과 답답함이 봄눈 녹듯 사라졌습니다. 구원은 자신이 쌓아 올린 율법의 지식이나 엄격한 규례에 있는 것이 아니었습니다. 오직 죄인을 위해 모든 것을 내어주신 예수님을 믿고, 마음을 새롭게 하시는 성령님을 의지하는 것이 참된 생명의 길이었습니다. 한밤중에 찾아온 학자는 마침내 영원한 생명의 빛을 만났습니다. 니고데모의 인생에서 가장 복되고 은혜로운 밤이었습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_10.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+
+<!-- 부모용 요약 -->
+<div class="parents-section">
+  <details>
+    <summary>📋 부모님을 위한 설교 말씀 분석 보기</summary>
+    <div class="parents-content"><h2>1. 본문과 배경</h2>
+<p>요한복음 3장은 유대인의 최고 의결 기관인 산헤드린 공회원이자 바리새파 학자인 니고데모가 한밤중에 예수님을 찾아온 사건을 다룹니다. 당시 종교 지도자들은 예수님을 경계하고 적대시했으나, 니고데모는 예수님이 행하신 표적 속에서 하나님의 임재를 직감하고 진리를 향한 갈급함으로 어둠을 뚫고 찾아왔습니다. 이 만남은 유대교 율법주의의 최고 권위자와 참된 진리이신 예수 그리스도의 대화를 통해, 인간의 공로나 종교적 배경이 아닌 '성령을 통한 거듭남'만이 구원의 유일한 길임을 선명하게 드러냅니다.</p>
+<h2>2. 본문의 흐름</h2>
+<p>본문은 인간의 지식과 율법적 의로움의 한계를 지적하며 영적 거듭남의 필연성을 차근차근 밝힙니다.<br />
+1. <strong>밤중의 방문과 지식적 고백(1-2절)</strong>: 니고데모는 예수님을 '하나님께로부터 오신 선생'으로 예우하며 대화를 시작합니다.<br />
+2. <strong>거듭남의 선언과 니고데모의 당황(3-4절)</strong>: 예수님은 사람의 겉모습을 보지 않으시고 '위로부터 다시 태어나지 않으면 하나님 나라를 볼 수 없다'는 절대적 진리를 선언하십니다. 니고데모는 이를 육체적인 탄생으로 오해합니다.<br />
+3. <strong>물과 성령으로 말미암는 새 생명(5-8절)</strong>: 예수님은 바람의 비유를 통해 보이지 않는 성령의 주권적인 역사로 인간의 내면이 새롭게 빚어짐을 설명하십니다.<br />
+4. <strong>구원의 절정, 하나님의 사랑과 믿음(9-16절)</strong>: 모세의 놋뱀 사건을 들어 장차 십자가에 들리실 인자를 계시하시고, 하나님이 독생자를 주실 만큼 세상을 사랑하사 믿는 자마다 영생을 얻게 하신다는 복음의 핵심을 선포하십니다.</p>
+<h3>그래서 나는 어떻게 해야 하는가</h3>
+<p>오늘부터 나는 부모로서 자녀에게 신앙의 겉모습이나 종교적 성실함(예배 출석, 지식 습득)만을 강요하며 안도하던 태도를 내려놓아야 합니다. 인간의 노력과 훈련만으로는 자녀의 영혼을 변화시킬 수 없음을 겸손히 인정하고, 이번 주에는 내 자녀의 마음을 오직 성령님께서 만지시고 거듭나게 해 주시기를 간절히 눈물로 기도하는 시간을 구별하여 갖겠습니다.</p>
+<h2>3. 핵심 신학 개념</h2>
+<ul>
+<li><strong>거듭남(중생, Regeneration)</strong>: 도덕적 수양이나 지적 배움으로 얻는 개선이 아니라, 성령의 주권적인 역사로 영적으로 죽었던 사람이 새로운 생명으로 완전히 다시 태어나는 사건입니다.</li>
+<li><strong>성령의 주권성</strong>: 바람이 임의로 불어 그 소리는 들어도 어디서 와서 어디로 가는지 알지 못하듯, 성령의 구원 사역은 인간의 계산과 통제를 뛰어넘는 하나님의 은혜로운 역사입니다.</li>
+<li><strong>오직 믿음(Sola Fide)</strong>: 천국은 율법 준수나 가문의 배경으로 들어가는 것이 아니라, 하나님이 주신 독생자 예수 그리스도를 믿음으로 영원한 생명을 얻는 것입니다.</li>
+</ul>
+<h2>4. 아이에게 전달할 핵심 메시지</h2>
+<ul>
+<li>우리가 착한 일을 많이 하거나 성경을 많이 안다고 해서 저절로 하나님 나라의 백성이 되는 것은 아니에요.</li>
+<li>바람이 보이지 않아도 나뭇가지의 흔들림으로 알 수 있듯, 성령님께서 우리 마음에 들어오시면 우리를 완전히 새로운 사람으로 빚어 주셔요.</li>
+<li>하나님은 우리를 너무나 사랑하셔서 독생자 예수님을 보내주셨고, 예수님을 마음으로 믿을 때 영원한 생명을 선물로 주신답니다.</li>
+</ul>
+<h2>5. 대화 질문 (부모-자녀)</h2>
+<ol>
+<li>니고데모는 율법도 잘 지키고 성경도 많이 아는 훌륭한 학자였는데, 왜 마음속에 채워지지 않는 갈증이 있었을까요?</li>
+<li>예수님이 말씀하신 '바람'처럼, 우리 눈에는 보이지 않지만 마음속에서 일하시는 성령님을 느껴본 적이 있나요?</li>
+<li>하나님께서 독생자 예수님을 우리에게 보내주실 만큼 나를 사랑하신다는 사실을 생각할 때, 마음에 어떤 감사가 떠오르나요?</li>
+</ol></div>
+  </details>
+</div>
+
+<!-- 찬양 추천 -->
+
+<div class="parents-section">
+  <details>
+    <summary>🎵 말씀과 함께하는 찬양 추천</summary>
+    <div class="songs-content">
+      
+      <div class="song-item">
+        <div class="song-title">하나님이 세상을 이처럼 사랑하사</div>
+        <div class="song-artist">올네이션스 (All Nations)</div>
+        <div class="song-reason">요한복음 3장 16절 말씀을 그대로 가사로 담아내어, 독생자를 주신 하나님의 크신 사랑과 구원의 은혜를 묵상하기에 가장 적합합니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%ED%95%98%EB%82%98%EB%8B%98%EC%9D%B4+%EC%84%B8%EC%83%81%EC%9D%84+%EC%9D%B4%EC%B2%98%EB%9F%BC+%EC%82%AC%EB%9E%91%ED%95%98%EC%82%AC+%EC%98%AC%EB%84%A4%EC%9D%B4%EC%85%98%EC%8A%A4+%28All+Nations%29"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+      <div class="song-item">
+        <div class="song-title">오직 예수뿐이네</div>
+        <div class="song-artist">마커스워십</div>
+        <div class="song-reason">우리의 의로움이나 행위가 아닌 오직 은혜와 주님의 십자가 사랑으로만 살아갈 수 있음을 고백하는 찬양입니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%EC%98%A4%EC%A7%81+%EC%98%88%EC%88%98%EB%BF%90%EC%9D%B4%EB%84%A4+%EB%A7%88%EC%BB%A4%EC%8A%A4%EC%9B%8C%EC%8B%AD"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+      <div class="song-item">
+        <div class="song-title">성령이 오셨네</div>
+        <div class="song-artist">김도현</div>
+        <div class="song-reason">물과 성령으로 거듭나야 함을 가르치신 예수님의 말씀처럼, 우리 영혼에 임하여 새 생명을 주시는 성령님의 역사를 깊이 노래합니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%EC%84%B1%EB%A0%B9%EC%9D%B4+%EC%98%A4%EC%85%A8%EB%84%A4+%EA%B9%80%EB%8F%84%ED%98%84"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+      <div class="song-item">
+        <div class="song-title">내 모습 이대로</div>
+        <div class="song-artist">제이어스 (J-US)</div>
+        <div class="song-reason">스스로의 힘으로 완벽해질 수 없는 연약한 상태 그대로 주님의 십자가 사랑 앞에 나아감을 진실하게 고백합니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%EB%82%B4+%EB%AA%A8%EC%8A%B5+%EC%9D%B4%EB%8C%80%EB%A1%9C+%EC%A0%9C%EC%9D%B4%EC%96%B4%EC%8A%A4+%28J-US%29"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+      <div class="song-item">
+        <div class="song-title">은혜</div>
+        <div class="song-artist">손경민</div>
+        <div class="song-reason">우리가 누려왔던 모든 것이 당연한 것이 아니라 오직 하나님의 값없는 선물과 은혜였음을 되새겨 주는 곡입니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%EC%9D%80%ED%98%9C+%EC%86%90%EA%B2%BD%EB%AF%BC"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+    </div>
+  </details>
+</div>
+
+
+<!-- 푸터 -->
+<div class="footer">
+  <p>성경 본문 참조: 대한성서공회 —
+    <a href="https://www.bskorea.or.kr" target="_blank">www.bskorea.or.kr</a>
+  </p>
+  <p style="margin-top:8px;">본문 위치: 요한복음 3:1-16</p>
+</div>
+
+</body>
+</html>

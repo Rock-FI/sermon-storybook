@@ -1,0 +1,72 @@
+[
+  {
+    "page": 1,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration perfectly captures Jesus standing on a Galilean hillside with a calm lake in the distance before a massive, attentive crowd, matching the text and prompt in every detail."
+  },
+  {
+    "page": 2,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration beautifully captures Jesus sitting on a boulder in the golden sunset glow surrounded by a weary, seated crowd in the remote wilderness, perfectly matching the text's mood and setting."
+  },
+  {
+    "page": 3,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The illustration beautifully portrays Jesus speaking gently with an open hand to Philip on a hillside at twilight, with the large crowd gathering in the background as described."
+  },
+  {
+    "page": 4,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration perfectly captures Philip gesturing helplessly to Jesus before the vast wilderness crowd at twilight, surrounded by worried disciples as described in the text."
+  },
+  {
+    "page": 5,
+    "attempt": 1,
+    "score": 6,
+    "aligned": true,
+    "feedback": "The illustration depicts Jesus and the boy holding the basket of loaves and fish well, though Andrew is not prominently featured leading the child."
+  },
+  {
+    "page": 6,
+    "attempt": 1,
+    "score": 7,
+    "aligned": true,
+    "feedback": "The illustration accurately depicts Jesus warmly receiving the basket from the boy under an evening light."
+  },
+  {
+    "page": 7,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration beautifully captures Jesus gesturing toward the crowd neatly seated in orderly rows across the green field at dusk."
+  },
+  {
+    "page": 8,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration beautifully captures Jesus lifting the basket of loaves and fish toward heaven in peaceful prayer on a gentle hill at twilight, matching both the prompt and the story text perfectly."
+  },
+  {
+    "page": 9,
+    "attempt": 1,
+    "score": 7,
+    "aligned": true,
+    "feedback": "The illustration faithfully depicts Jesus and the disciples sharing abundant bread and fish with joyful crowds on a warm hillside."
+  },
+  {
+    "page": 10,
+    "attempt": 1,
+    "score": 6,
+    "aligned": true,
+    "feedback": "The illustration captures the peaceful gathering of leftover bread and fish before the crowd, though fewer than twelve disciples and baskets are visible."
+  }
+]
