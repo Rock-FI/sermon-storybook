@@ -1,0 +1,72 @@
+[
+  {
+    "page": 1,
+    "attempt": 1,
+    "score": 7,
+    "aligned": true,
+    "feedback": "The illustration effectively captures Jesus solemnly carrying the cross toward Golgotha past onlookers, though his appearance lacks the visible wounds described."
+  },
+  {
+    "page": 2,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration perfectly captures Jesus enduring the crucifixion atop the rocky hill with Roman soldiers standing guard, faithfully matching both the text and prompt."
+  },
+  {
+    "page": 3,
+    "attempt": 1,
+    "score": 6,
+    "aligned": true,
+    "feedback": "The illustration effectively captures the mocking crowd and Jesus's sorrowful posture on the cross, though his gaze is directed downward rather than toward heaven as mentioned in the text."
+  },
+  {
+    "page": 4,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The illustration captures the sorrowful scene with Mary weeping with her hand to her chest while John gently supports her near the foot of Jesus' cross, matching the emotional tone and narrative well."
+  },
+  {
+    "page": 5,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The illustration beautifully captures the tender, sorrowful moment of Jesus looking down from the cross at Mary and John in warm amber light, though John stands on the other side of the cross rather than beside Mary."
+  },
+  {
+    "page": 6,
+    "attempt": 1,
+    "score": 7,
+    "aligned": true,
+    "feedback": "The illustration accurately captures the solitary figure of Jesus on the cross under a dark, heavy sky, matching the somber mood and setting of the text."
+  },
+  {
+    "page": 7,
+    "attempt": 1,
+    "score": 7,
+    "aligned": true,
+    "feedback": "The illustration accurately depicts the man offering wine on a hyssop branch to Jesus on the cross beside the clay vessel under a somber sky."
+  },
+  {
+    "page": 8,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration beautifully captures Jesus crying out in triumph on the cross beneath a dramatic heavenly beam of golden light breaking through the dark clouds, perfectly reflecting the victorious declaration in the text."
+  },
+  {
+    "page": 9,
+    "attempt": 1,
+    "score": 5,
+    "aligned": false,
+    "feedback": "While the torn temple curtain in the background is depicted well, Jesus is shown standing fully clothed in front of the cross rather than hanging on the cross at the moment of his death."
+  },
+  {
+    "page": 10,
+    "attempt": 1,
+    "score": 6,
+    "aligned": true,
+    "feedback": "The setting captures the peaceful cross, wildflowers, and Jerusalem at twilight, though a prominent standing figure was added."
+  }
+]

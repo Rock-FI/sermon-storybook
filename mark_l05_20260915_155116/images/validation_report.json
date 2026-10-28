@@ -1,0 +1,65 @@
+[
+  {
+    "page": 1,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration beautifully captures Jesus standing peacefully on the Galilean fishing boat with his disciples preparing the oars and ropes under a warm sunset glow, matching the text perfectly."
+  },
+  {
+    "page": 2,
+    "attempt": 1,
+    "score": 6,
+    "aligned": true,
+    "feedback": "The stormy sea and anxious disciples match the text well, though Jesus is already standing calmly to still the storm rather than emphasizing solely the disciples' terror."
+  },
+  {
+    "page": 3,
+    "attempt": 1,
+    "score": 6,
+    "aligned": true,
+    "feedback": "The illustration depicts the disciples bailing water from the boat in a rainstorm, though the atmosphere is calmer than the extreme peril described in the text."
+  },
+  {
+    "page": 4,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration perfectly captures Jesus sleeping serenely on a pillow at the stern of the boat amidst the violent waves and stormy sea, contrasting with the terrified disciples."
+  },
+  {
+    "page": 5,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The illustration captures the stormy sea, the panicked disciples frantically shouting and shaking Jesus, and Jesus peacefully resting on a pillow in the boat."
+  },
+  {
+    "page": 6,
+    "attempt": 1,
+    "score": 7,
+    "aligned": true,
+    "feedback": "The illustration captures Jesus standing resolutely on the boat amid the stormy sea with calm composure."
+  },
+  {
+    "page": 7,
+    "attempt": 1,
+    "score": 9,
+    "aligned": true,
+    "feedback": "The illustration beautifully captures Jesus standing with divine authority in the boat, raising his hand to calm the turbulent waves and wind as described in the text."
+  },
+  {
+    "page": 8,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration perfectly captures Jesus standing peacefully at the boat's prow over calm, glassy waters under a serene, moonlit night sky as described."
+  },
+  {
+    "page": 9,
+    "attempt": 1,
+    "score": 10,
+    "aligned": true,
+    "feedback": "The illustration perfectly captures Jesus gently addressing his disciples on a tranquil, moonlit boat while they gaze back in profound awe with water dripping from their clothes."
+  }
+]
