@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>성경 동화책 — Genesis 50:20</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: #fdf6ec; color: #3a2a1a; }
+  .cover {
+    text-align: center; padding: 60px 20px;
+    background: linear-gradient(135deg, #e8d5b0, #c9a96e);
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+  }
+  .cover h1 { font-size: 2.2rem; color: #5a3010; margin-bottom: 12px; }
+  .cover p { font-size: 1.1rem; color: #7a5030; }
+  .bible-badge {
+    margin-top: 24px; padding: 10px 20px;
+    background: #fff8ee; border: 2px solid #c9a96e;
+    border-radius: 20px; font-size: 1rem; color: #5a3010;
+  }
+  .read-all-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: #5a3010; padding: 10px 20px;
+    display: flex; justify-content: center; gap: 12px; align-items: center;
+  }
+  .read-all-bar button {
+    padding: 8px 22px; border: none; border-radius: 20px;
+    font-size: 0.95rem; cursor: pointer; font-weight: bold;
+  }
+  #btn-read-all { background: #c9a96e; color: white; }
+  #btn-read-all:hover { background: #e8c080; }
+  #btn-stop { background: #fff8ee; color: #5a3010; }
+  #btn-stop:hover { background: #ffe8c0; }
+  #read-status { color: #e8d5b0; font-size: 0.85rem; }
+  .page {
+    max-width: 1100px; margin: 40px auto; padding: 20px;
+    background: #fffdf8; border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transition: box-shadow 0.3s;
+  }
+  .page.active-page {
+    box-shadow: 0 0 0 3px #c9a96e, 0 4px 24px rgba(0,0,0,0.12);
+  }
+  .page-number {
+    font-size: 0.85rem; color: #a08060; text-align: right;
+    margin-bottom: 8px;
+  }
+  /* Picture on the left, story text on the right, so a child can look and read together. */
+  .page-body { display: flex; gap: 28px; align-items: flex-start; }
+  .page-figure { flex: 1 1 50%; min-width: 0; }
+  .page-content { flex: 1 1 50%; min-width: 0; display: flex; flex-direction: column; }
+  .page img { width: 100%; border-radius: 12px; display: block; }
+  .page-text {
+    font-size: 1.15rem; line-height: 1.9;
+    color: #3a2a1a; margin-bottom: 8px; padding: 0 4px;
+  }
+  audio { width: 100%; margin-top: 12px; }
+  /* Phones and narrow tablets: stack the picture above the text instead. */
+  @media (max-width: 820px) {
+    .page { max-width: 700px; }
+    .page-body { flex-direction: column; gap: 16px; }
+  }
+  .parents-section {
+    max-width: 700px; margin: 40px auto; padding: 20px;
+  }
+  details {
+    background: #fff8ee; border: 1px solid #c9a96e;
+    border-radius: 12px; padding: 16px;
+  }
+  summary {
+    font-size: 1.1rem; font-weight: bold; color: #5a3010;
+    cursor: pointer; padding: 4px 0;
+  }
+  .parents-content {
+    margin-top: 16px; line-height: 1.9; font-size: 0.95rem;
+  }
+  .parents-content h2 {
+    font-size: 1.05rem; color: #5a3010; margin: 18px 0 6px;
+    border-bottom: 1px solid #e8d5b0; padding-bottom: 4px;
+  }
+  .parents-content p { margin-bottom: 8px; }
+  .parents-content ul { padding-left: 20px; margin-bottom: 8px; }
+  .parents-content li { margin-bottom: 4px; }
+  .songs-content { margin-top: 16px; }
+  .song-item {
+    background: #fffdf8; border: 1px solid #e8d5b0;
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 12px;
+  }
+  .song-title { font-size: 1.05rem; font-weight: bold; color: #5a3010; margin-bottom: 2px; }
+  .song-artist { font-size: 0.88rem; color: #9a7050; margin-bottom: 6px; }
+  .song-reason { font-size: 0.92rem; color: #4a3a2a; line-height: 1.6; margin-bottom: 8px; }
+  .song-youtube {
+    display: inline-block; font-size: 0.82rem; color: #c9843e;
+    text-decoration: none; border: 1px solid #c9843e;
+    border-radius: 12px; padding: 3px 10px;
+  }
+  .song-youtube:hover { background: #c9843e; color: #fff; }
+  .footer {
+    text-align: center; padding: 40px 20px;
+    font-size: 0.85rem; color: #a08060;
+    border-top: 1px solid #e8d5b0; margin-top: 40px;
+  }
+  .footer a { color: #c9a96e; }
+</style>
+</head>
+<body>
+
+<!-- 표지 -->
+<div class="cover">
+  <h1>성경 동화책</h1>
+  <p>어린이를 위한 말씀 이야기</p>
+  <div class="bible-badge">📖 Genesis 50:20</div>
+</div>
+
+<!-- 전체 읽어주기 바 -->
+<div class="read-all-bar">
+  <button id="btn-read-all" onclick="readAll()">▶ 전체 읽어주기</button>
+  <button id="btn-stop" onclick="stopReading()">■ 멈추기</button>
+  <span id="read-status"></span>
+</div>
+
+<script>
+// When narration mp3s exist we play those in order; otherwise we fall back to the
+// browser's built-in speech synthesis. Either way one click reads all 10 pages.
+var HAS_AUDIO = true;
+var narrations = [
+  "(\ub530\ub73b\ud558\uac8c) \ub530\uc2a4\ud55c \uc544\uce68 \ud587\uc0b4\uc774 \ub3cc\ubcbd \ucc3d\ubb38\uc73c\ub85c \ubd80\ub4dc\ub7fd\uac8c \uc2a4\uba70\ub4e4\uace0 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \uc5f4\ud55c \uc0b4 \uc18c\ub144 \uc544\ub2f4\uc740 \ubc29 \ud55c\uad6c\uc11d \ub098\ubb34 \ucc45\uc0c1 \uc55e\uc5d0 \uc815\uc131\uaecf \uc790\ub9ac\ub97c \uc7a1\uace0 \uc549\uc558\uc2b5\ub2c8\ub2e4. \ub9c8\uc744 \ubbf8\uc220 \ub300\ud68c\uc5d0 \ub0bc \uc18c\uc911\ud55c \uadf8\ub9bc\uc744 \uc644\uc131\ud558\ub294 \ub0a0\uc774\uc5c8\uae30 \ub54c\ubb38\uc785\ub2c8\ub2e4. \u2026 \ucc45\uc0c1 \uc704\uc5d0\ub294 \uc815\uc131\uc2a4\ub808 \uac08\uc544 \ub9cc\ub4e0 \ubd89\uc740\ube5b\uacfc \ud478\ub978\ube5b\uc758 \ud759 \ubb3c\uac10\ub4e4\uc774 \uc791\uc740 \ud1a0\uae30 \uadf8\ub987\uc5d0 \uac00\uc9c0\ub7f0\ud788 \ub193\uc5ec \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \uc544\ub2f4\uc740 \uba70\uce60 \ub3d9\uc548 \uc815\uc131\uc744 \ub2e4\ud574 \ub113\uc740 \uc591\ud53c\uc9c0 \uc704\uc5d0 \ud478\ub978 \ub4e4\ud310\uacfc \uc5b8\ub355\uc744 \uadf8\ub824 \uc654\uc2b5\ub2c8\ub2e4. \u2026 \uac00\ub290\ub2e4\ub780 \uac08\ub300 \ubd93\uc744 \uc954 \uc544\ub2f4\uc758 \uc190\ub05d\uc740 \uc870\uae08\ub3c4 \ud750\ud2b8\ub7ec\uc9d0 \uc5c6\uc774 \uc870\uc2ec\uc2a4\ub7ec\uc6e0\uc2b5\ub2c8\ub2e4. \u2026 \uc644\ubcbd\ud558\uac8c \uba4b\uc9c4 \uc791\ud488\uc744 \uc644\uc131\ud558\uc5ec \uc0ac\ub78c\ub4e4\uc5d0\uac8c \ubcf4\uc5ec \uc8fc\uace0 \uc2f6\uc740 \ub9c8\uc74c\uc774 \uac00\ub4dd\ud588\uc2b5\ub2c8\ub2e4. \uc544\ub2f4\uc740 \uc228\uc744 \uace0\ub974\uba70 \ub9c8\uc9c0\ub9c9 \ub4e4\ud310\uc758 \ud480\uc78e\ub4e4\uc744 \ud55c \uc78e \ud55c \uc78e \uc138\ubc00\ud558\uac8c \ucc44\uc6cc \ub098\uac14\uc2b5\ub2c8\ub2e4.","(\uae34\uc7a5\uac10 \uc788\uac8c) \ub9c8\uce68\ub0b4 \uadf8\ub9bc\uc758 \uac70\uc758 \ubaa8\ub4e0 \ubd80\ubd84\uc774 \uc644\uc131\ub418\uc5b4 \uac00\uace0 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \uc544\ub2f4\uc740 \ubfcc\ub4ef\ud55c \ub9c8\uc74c\uc73c\ub85c \ubd93\uc744 \ubc14\uafb8\uae30 \uc704\ud574 \ud314\uc744 \ubed7\uc5c8\uc2b5\ub2c8\ub2e4. \ubc14\ub85c \uadf8 \uc21c\uac04, \u2026 \uc544\ub2f4\uc758 \ud314\uafc8\uce58\uac00 \ubb3c\uac10\uc774 \ub4e0 \uc791\uc740 \uc639\uae30\uadf8\ub987\uc744 \ud22d \uac74\ub4dc\ub9ac\uace0 \ub9d0\uc558\uc2b5\ub2c8\ub2e4. \ud0c1\uc790 \uc704\uc5d0 \ub193\uc5ec \uc788\ub358 \uac80\uc740 \uba39\ubb3c \ubb3c\ud1b5\uc774 \uae30\uc6b0\ub6b1\ud558\ub354\ub2c8 \uadf8\ub300\ub85c \uc591\ud53c\uc9c0 \uc704\ub85c \uc3df\uc544\uc84c\uc2b5\ub2c8\ub2e4. \u2026 \uc9d9\uace0 \uc5b4\ub450\uc6b4 \uac80\uc740 \ubb3c\uac10\uc774 \uc21c\uc2dd\uac04\uc5d0 \uadf8\ub9bc \ud55c\uac00\uc6b4\ub370\ub85c \ubc88\uc838 \ub098\uac14\uc2b5\ub2c8\ub2e4. \uba70\uce60 \ub3d9\uc548 \uacf5\ub4e4\uc5ec \uadf8\ub9b0 \ub9d1\uace0 \ud478\ub978 \ub4e4\ud310 \uc704\ub85c \ud749\uce21\ud558\uace0 \uac70\ub300\ud55c \uac80\uc740 \uc5bc\ub8e9\uc774 \uc790\ub9ac\ub97c \uc7a1\uc558\uc2b5\ub2c8\ub2e4. \u2026 \uc544\ub2f4\uc740 \uad73\uc5b4 \ubc84\ub9b0 \ucc44 \ub450 \uc190\uc73c\ub85c \uba38\ub9ac\ub97c \uac10\uc2f8 \uc950\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \ub3cc\uc774\ud0ac \uc218 \uc5c6\ub294 \ub054\ucc0d\ud55c \uc2e4\uc218\uac00 \ub208\uc55e\uc5d0\uc11c \ubc8c\uc5b4\uc9c0\uace0 \ub9cc \uac83\uc785\ub2c8\ub2e4.","(\uc2ac\ud504\uace0 \ub5a8\ub9ac\ub294 \ubaa9\uc18c\ub9ac\ub85c) \uc544\ub2f4\uc758 \ub208\uc5d0\uc11c \ub728\uac70\uc6b4 \ub208\ubb3c\uc774 \uc648\uce75 \uc3df\uc544\uc838 \ub0b4\ub838\uc2b5\ub2c8\ub2e4. \u2026 \uc544\ubb34\ub9ac \uae68\ub057\ud55c \ucc9c\uc73c\ub85c \ub2e6\uc544 \ub0b4\ub824 \ud574\ub3c4 \uac80\uc740 \uc790\uad6d\uc740 \uc885\uc774 \uae4a\uc219\uc774 \uc2a4\uba70\ub4e4 \ubfd0\uc774\uc5c8\uc2b5\ub2c8\ub2e4. \u300c\ub2e4 \ub9dd\uccd0 \ubc84\ub838\uc5b4. \ub0b4 \uadf8\ub9bc\uc740 \uc774\uc81c \ub05d\ub0ac\uc5b4.\u300d \u2026 \uc544\ub2f4\uc740 \ud750\ub290\ub07c\uba70 \ucc45\uc0c1 \uc704\uc5d0 \uc5ce\ub4dc\ub824 \uc5b4\uae68\ub97c \ub5a8\uc5c8\uc2b5\ub2c8\ub2e4. \uc774\ubc88 \ub300\ud68c\uc5d0\uc11c \uac00\uc7a5 \uba4b\uc9c4 \ucd5c\uace0 \uc791\ud488\uc744 \ub9cc\ub4e4\uace0 \uc2f6\uc5c8\ub358 \uafc8\uc774 \ud55c\uc21c\uac04\uc5d0 \uc0b0\uc0b0\uc870\uac01 \ub0ac\uc2b5\ub2c8\ub2e4. \u2026 \uc644\ubcbd\ud558\uac8c \ud574\ub0b4\ub824 \ud588\ub358 \uc790\uc2e0\uc758 \uc190\uc73c\ub85c \ubaa8\ub4e0 \uac83\uc744 \ub9dd\ucce4\ub2e4\ub294 \uc0dd\uac01\uc5d0 \ub9c8\uc74c\uc774 \ub108\ubb34\ub098 \uad34\ub85c\uc6e0\uc2b5\ub2c8\ub2e4. \ub9dd\uac00\uc9c4 \uadf8\ub9bc\uc744 \ub2e4\uc2dc \uccd0\ub2e4\ubcfc \uc6a9\uae30\uc870\ucc28 \ub098\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \u2026 \ubc29 \uc548\uc5d0\ub294 \uc624\uc9c1 \uc544\ub2f4\uc758 \uc2ac\ud508 \uc6b8\uc74c\uc18c\ub9ac\ub9cc\uc774 \uac00\ub4dd \uc6b8\ub824 \ud37c\uc84c\uc2b5\ub2c8\ub2e4.","(\ub530\ub73b\ud558\uace0 \ubd80\ub4dc\ub7fd\uac8c) \uc870\uc6a9\ud788 \ubb38\uc774 \uc5f4\ub9ac\ub354\ub2c8 \uc544\ube60\uac00 \ubc29 \uc548\uc73c\ub85c \ub4e4\uc5b4\uc624\uc168\uc2b5\ub2c8\ub2e4. \u2026 \uc544\ube60\ub294 \uc5c9\ub9dd\uc774 \ub41c \uadf8\ub9bc\uacfc \ub208\ubb3c\ubc94\ubc85\uc774 \ub41c \uc544\ub2f4\uc744 \ubc88\uac08\uc544 \ubc14\ub77c\ubcf4\uc168\uc2b5\ub2c8\ub2e4. \uadf8\ub7ec\ub098 \uc544\ube60\ub294 \ud654\ub97c \ub0b4\uac70\ub098 \ub098\ubb34\ub77c\uc9c0 \uc54a\uc73c\uc2dc\uace0, \uac00\ub9cc\ud788 \ub2e4\uac00\uc640 \uc544\ub2f4\uc758 \uc5b4\uae68\ub97c \uac10\uc2f8 \uc548\uc544 \uc8fc\uc168\uc2b5\ub2c8\ub2e4. \u2026 \u300c\uc544\ub2f4\uc544, \uc774 \ubc29\uc5d0 \uc6b8\ub9ac\ub294 \uc18c\ub9ac\uc5d0 \uadc0\ub97c \uae30\uc6b8\uc5ec \ubcf4\ub834.\u300d \uc544\ube60\uac00 \ubcbd\uc5d0 \uac78\ub9b0 \uc2dc\uacc4\ub97c \uac00\ub9ac\ud0a4\uba70 \ubd80\ub4dc\ub7ec\uc6b4 \ubaa9\uc18c\ub9ac\ub85c \ub9d0\uc500\ud558\uc168\uc2b5\ub2c8\ub2e4. \u2026 \uc870\uc6a9\ud55c \ubc29 \uc548\uc5d0\uc11c \uc2dc\uacc4 \ucd94\uac00 \uc77c\uc815\ud55c \uc18c\ub9ac\ub97c \ub0b4\uba70 \uaddc\uce59\uc801\uc73c\ub85c \uc6c0\uc9c1\uc774\uace0 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \uc9f8\uae4d, \uc9f8\uae4d, \uc26c\uc9c0 \uc54a\uace0 \uc6b8\ub9ac\ub294 \uc18c\ub9ac\uac00 \uc544\ub2f4\uc758 \uadc0\uc5d0 \ub2ff\uc558\uc2b5\ub2c8\ub2e4. \u2026 \uc544\ub2f4\uc740 \ud6cc\uca4d\uc774\uba74\uc11c \ub208\uac00\ub97c \ud6d4\uce58\uace0 \uc544\ube60\uc758 \uc5bc\uad74\uc744 \uc62c\ub824\ub2e4\ubcf4\uc558\uc2b5\ub2c8\ub2e4.","(\ub2e4\uc815\ud558\uace0 \ud798\uc788\uac8c) \u300c\uc774 \uc2dc\uacc4 \uc18c\ub9ac\ucc98\ub7fc, \ud558\ub098\ub2d8\uc740 \uc6b0\ub9ac\uac00 \uc2ac\ud37c\ud560 \ub54c\ub098 \uc2e4\uc218\ud588\uc744 \ub54c\ub3c4 \uacb0\ucf54 \uc26c\uc9c0 \uc54a\uace0 \uc77c\ud558\uace0 \uacc4\uc2e0\ub2e8\ub2e4.\u300d \u2026 \uc544\ube60\uac00 \ub2e4\uc815\ud55c \ub208\ube5b\uc73c\ub85c \uc544\ub2f4\uc758 \uc190\uc744 \uaf2d \uc950\uc5b4 \uc8fc\uc168\uc2b5\ub2c8\ub2e4. \uc544\ub2f4\uc740 \ucf54\ub97c \ud6cc\uca4d\uc774\uba70 \uc791\uc740 \ubaa9\uc18c\ub9ac\ub85c \ub418\ubb3c\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \u300c\ud558\uc9c0\ub9cc \uc544\ube60, \uc81c\uac00 \uc2e4\uc218\ub85c \uadf8\ub9bc\uc744 \uc644\uc804\ud788 \ub9dd\uccd0 \ubc84\ub838\ub294\uac78\uc694.\u300d \uc544\ube60\ub294 \ube59\uadf8\ub808 \ubbf8\uc18c\ub97c \uc9c0\uc73c\uc2dc\uba70 \uace0\uac1c\ub97c \uc800\uc73c\uc168\uc2b5\ub2c8\ub2e4. \u2026 \u300c\ud558\ub098\ub2d8\uc740 \uc6b0\ub9ac\uac00 \uc800\uc9c0\ub978 \uc2e4\uc218\ubcf4\ub2e4 \ud6e8\uc52c \ud06c\uace0 \uc9c0\ud61c\ub85c\uc6b0\uc2e0 \ubd84\uc774\ub780\ub2e4. \u2026 \uc6b0\ub9ac\uac00 \ubcf4\uc9c0 \ubabb\ud558\ub294 \uc21c\uac04\uc5d0\ub3c4 \ud558\ub098\ub2d8\uc740 \uc6b0\ub9ac\ub97c \uc704\ud574 \uac00\uc7a5 \uc88b\uc740 \uae38\uc744 \uc900\ube44\ud558\uace0 \uacc4\uc2dc\uc9c0. \ud558\ub098\ub2d8\uc740 \uacb0\ucf54 \uc878\uc9c0\ub3c4 \uc54a\uc73c\uc2dc\uace0 \uc26c\uc9c0\ub3c4 \uc54a\uc73c\uc2e0\ub2e8\ub2e4.\u300d \u2026 \uc544\ube60\uc758 \ub4e0\ub4e0\ud55c \ub9d0\uc500\uc5d0 \uc544\ub2f4\uc758 \uc694\ub3d9\uce58\ub358 \ub9c8\uc74c\uc774 \uc870\uae08\uc529 \uac00\ub77c\uc549\uae30 \uc2dc\uc791\ud588\uc2b5\ub2c8\ub2e4.","(\uae4a\uc740 \uc6b8\ub9bc\uc73c\ub85c) \uc544\ube60\ub294 \uc61b\uc774\uc57c\uae30\ub97c \ub4e4\ub824\uc8fc\ub4ef \ucc28\ubd84\ud558\uac8c \ub9d0\uc500\uc744 \uc774\uc5b4\uac00\uc168\uc2b5\ub2c8\ub2e4. \u2026 \u300c\uc131\uacbd \uc18d \uc694\uc149\uc758 \uc774\uc57c\uae30\ub97c \uae30\uc5b5\ud558\ub2c8? \ud615\ub4e4\uc758 \ubbf8\uc6c0\uc744 \ubc1b\uc544 \uba3c \ub098\ub77c\uc5d0 \uc885\uc73c\ub85c \ud314\ub824 \uac00\uace0, \uc5b5\uc6b8\ud558\uac8c \uac10\uc625\uc5d0 \uac07\ud788\uae30\uae4c\uc9c0 \ud588\ub2e8\ub2e4. \u2026 \uac89\uc73c\ub85c \ubcf4\uae30\uc5d0\ub294 \uc694\uc149\uc758 \uc778\uc0dd\uc774 \uc644\uc804\ud788 \ub9dd\uac00\uc9c4 \uac83\ucc98\ub7fc \ubcf4\uc600\uc9c0. \ud558\uc9c0\ub9cc \ud558\ub098\ub2d8\uc740 \uadf8 \uce84\uce84\ud55c \uc2dc\uac04 \uc18d\uc5d0\uc11c\ub3c4 \uc26c\uc9c0 \uc54a\uace0 \uc694\uc149\uc744 \uc704\ud574 \uc77c\ud558\uace0 \uacc4\uc168\ub2e8\ub2e4. \u2026 \ub9c8\uce68\ub0b4 \ud558\ub098\ub2d8\uc740 \uadf8 \ubaa8\ub4e0 \uc5b4\ub824\uc6c0\uc744 \ubc14\uafb8\uc5b4 \uc218\ub9ce\uc740 \uc0ac\ub78c\uc758 \ubaa9\uc228\uc744 \uad6c\ud558\ub294 \ud070\uc77c\uc744 \uc774\ub8e8\uc168\uc9c0. \u2026 \uc0ac\ub78c\uc758 \ub208\uc5d0\ub294 \uc2e4\uc218\ub098 \uc2e4\ud328\ucc98\ub7fc \ubcf4\uc5ec\ub3c4, \ud558\ub098\ub2d8\uc740 \uadf8\uac83\uc870\ucc28 \ub180\ub77c\uc6b4 \uc120\uc73c\ub85c \ubc14\uafb8\uc2dc\ub294 \ubd84\uc774\ub780\ub2e4.\u300d \u2026 \uc544\ube60\uc758 \uc774\uc57c\uae30\ub97c \ub4e4\uc73c\uba70 \uc544\ub2f4\uc758 \ub9c8\uc74c\uc5d0 \uc791\uc740 \ud76c\ub9dd\uc758 \ubd88\uc528\uac00 \ud53c\uc5b4\uc62c\ub790\uc2b5\ub2c8\ub2e4.","(\uacbd\uac74\ud558\uace0 \uc9c4\uc9c0\ud558\uac8c) \uc544\ube60\uac00 \ubc29\uc744 \ub098\uac04 \ub4a4, \uc544\ub2f4\uc740 \uc870\uc6a9\ud788 \ubb34\ub98e\uc744 \uafc7\uace0 \ub450 \uc190\uc744 \ubaa8\uc558\uc2b5\ub2c8\ub2e4. \u2026 \ubc29 \uc548\uc5d0\ub294 \uc5ec\uc804\ud788 \uc2dc\uacc4\uc758 \uc9f8\uae4d\uac70\ub9ac\ub294 \uc18c\ub9ac\uac00 \ud558\ub098\ub2d8\uc758 \uc77c\ud558\uc2ec\ucc98\ub7fc \uc6b8\ub9ac\uace0 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \u300c\ud558\ub098\ub2d8, \uc81c\uac00 \uc2e4\uc218\ub85c \uc18c\uc911\ud55c \uadf8\ub9bc\uc744 \ub9dd\uccd0\uc11c \ub108\ubb34 \uc18d\uc0c1\ud588\uc5b4\uc694. \ud558\uc9c0\ub9cc \ud558\ub098\ub2d8\uaed8\uc11c \uc9c0\uae08\ub3c4 \uc800\ub97c \uc704\ud574 \uc77c\ud558\uace0 \uacc4\uc2ec\uc744 \ubbff\uc5b4\uc694. \uc800\uc5d0\uac8c \uc9c0\ud61c\ub97c \uc8fc\uc154\uc11c \uc774 \uc2e4\uc218\ub97c \uc774\uaca8 \ub0bc \uc218 \uc788\uac8c \ub3c4\uc640\uc8fc\uc138\uc694.\u300d \u2026 \uc544\ub2f4\uc740 \ub9c8\uc74c\uc744 \ub2e4\ud574 \uc9e7\uace0 \uc9c4\uc2e4\ud55c \uae30\ub3c4\ub97c \uc62c\ub824 \ub4dc\ub838\uc2b5\ub2c8\ub2e4. \u2026 \uae30\ub3c4\ub97c \ub9c8\uce58\uace0 \ub208\uc744 \ub728\uc790, \uc2e0\uae30\ud558\uac8c\ub3c4 \uac00\uc2b4\uc744 \uc9d3\ub204\ub974\ub358 \ub2f5\ub2f5\ud568\uc774 \uc0ac\ub77c\uc9c0\uace0 \ud3c9\uc548\uc774 \ucc3e\uc544\uc654\uc2b5\ub2c8\ub2e4. \uc544\ub2f4\uc740 \ub2e4\uc2dc \ucc45\uc0c1 \uc55e\uc73c\ub85c \ub2e4\uac00\uac00 \uc591\ud53c\uc9c0 \uc704\uc758 \uac80\uc740 \uc5bc\ub8e9\uc744 \ubb3c\ub044\ub7ec\ubbf8 \ubc14\ub77c\ubcf4\uc558\uc2b5\ub2c8\ub2e4.","(\uae68\ub2ec\uc74c\uacfc \uc124\ub818\uc73c\ub85c) \uc5bc\ub8e9\uc744 \uc790\uc138\ud788 \ub4e4\uc5ec\ub2e4\ubcf4\ub358 \uc544\ub2f4\uc758 \ub208\uc774 \ubc88\uca4d \ub728\uc600\uc2b5\ub2c8\ub2e4. \u2026 \uc870\uae08 \uc804\uae4c\uc9c0\ub9cc \ud574\ub3c4 \ud749\uce21\ud558\uac8c\ub9cc \ubcf4\uc774\ub358 \uac80\uc740 \ubb3c\uac10 \uc790\uad6d\uc774 \ub2e4\ub974\uac8c \ubcf4\uc774\uae30 \uc2dc\uc791\ud588\uc2b5\ub2c8\ub2e4. \u2026 \uc5bc\ub8e9\uc758 \ub465\uae00\uace0 \ub113\uc801\ud55c \ubaa8\uc591\uc774 \ub9c8\uce58 \ud558\ub298\uc5d0 \ud53c\uc5b4\uc624\ub978 \uc9d9\uc740 \uad6c\ub984\ucc98\ub7fc \ubcf4\uc600\ub358 \uac83\uc785\ub2c8\ub2e4. \u2026 \u300c\uadf8\ub798, \uc774\uac74 \uba54\ub9c8\ub978 \ub545\uc5d0 \uc2dc\uc6d0\ud55c \ube44\ub97c \ub0b4\ub824 \uc8fc\ub294 \uba39\uad6c\ub984\uc774\uc57c!\u300d \uc544\ub2f4\uc758 \uc785\uac00\uc5d0 \ud658\ud55c \ubbf8\uc18c\uac00 \ubc88\uc84c\uc2b5\ub2c8\ub2e4. \u2026 \uac80\uc740 \ubb3c\uac10\uc740 \uadf8\ub9bc\uc744 \ub9dd\uce5c \ubc29\ud574\ubb3c\uc774 \uc544\ub2c8\ub77c, \uc0c8\ub85c\uc6b4 \uc0dd\uba85\uc744 \ubd88\ub7ec\uc62c \ube44\uad6c\ub984\uc774 \ub420 \uc218 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \uc544\ub2f4\uc740 \uc8fc\uc800 \uc5c6\uc774 \ubd93\uc744 \ub4e4\uc5b4 \ubb3c\uc744 \uc801\uc2dc\uace0 \uba39\uad6c\ub984\uc758 \uac00\uc7a5\uc790\ub9ac\ub97c \ubd80\ub4dc\ub7fd\uac8c \ub2e4\ub4ec\uae30 \uc2dc\uc791\ud588\uc2b5\ub2c8\ub2e4. \u2026 \ub450\ub824\uc6c0\uc740 \uc0ac\ub77c\uc9c0\uace0 \uc124\ub818\uacfc \uae30\ub300\uac10\uc774 \uc544\ub2f4\uc758 \uc190\ub05d\uc744 \ucc44\uc6e0\uc2b5\ub2c8\ub2e4.","(\uc0dd\ub3d9\uac10 \uc788\uace0 \ubc1d\uac8c) \uc544\ub2f4\uc740 \uc9d9\uc740 \uba39\uad6c\ub984 \uc544\ub798\ub85c \uc740\ube5b \ube57\uc904\uae30\ub4e4\uc744 \uac00\ub298\uace0 \ucd18\ucd18\ud558\uac8c \uadf8\ub824 \ub123\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \ud558\ub298\uc5d0\uc11c \uc3df\uc544\uc9c0\ub294 \uc2dc\uc6d0\ud55c \ub2e8\ube44\uac00 \uba54\ub9c8\ub978 \ub4e4\ud310\uc744 \ucd09\ucd09\ud558\uac8c \uc801\uc2dc\ub294 \ubaa8\uc2b5\uc774 \uc0dd\uc0dd\ud558\uac8c \ud45c\ud604\ub418\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \ube44\ub97c \ub9de\uc740 \ub4e4\ud310 \uc544\ub798\ucabd\uc5d0\ub294 \ud654\uc0ac\ud55c \ubd89\uc740\uc0c9\uacfc \ub178\ub780\uc0c9, \ubcf4\ub78f\ube5b \ubb3c\uac10\uc73c\ub85c \uc544\ub984\ub2e4\uc6b4 \ub4e4\uaf43\ub4e4\uc744 \ud558\ub098\ub458 \ud53c\uc6cc \ub0c8\uc2b5\ub2c8\ub2e4. \u2026 \ube44\uad6c\ub984\uc774 \uc5c6\uc5c8\ub2e4\uba74 \uacb0\ucf54 \ud53c\uc5b4\ub0a0 \uc218 \uc5c6\uc5c8\ub358 \ub208\ubd80\uc2e0 \uaf43\ubc2d\uc774\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \uac80\uc740 \uc5bc\ub8e9\uc740 \ub354 \uc774\uc0c1 \uc2e4\ud328\uc758 \ud754\uc801\uc774 \uc544\ub2c8\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \ud478\ub978 \ub4e4\ud310\uacfc \ub2e8\ube44, \uc2f1\uadf8\ub7ec\uc6b4 \uaf43\ub4e4\uc774 \uc5b4\uc6b0\ub7ec\uc838 \uadf8\ub9bc\uc740 \ucc98\uc74c \uacc4\ud68d\ud588\ub358 \uac83\ubcf4\ub2e4 \ud6e8\uc52c \ub354 \ud48d\uc131\ud558\uace0 \uac10\ub3d9\uc801\uc778 \uba85\uc791\uc73c\ub85c \ubcc0\ud574 \uac14\uc2b5\ub2c8\ub2e4.","(\uae30\uc068\uacfc \ubc85\ucc2c \uac10\ub3d9\uc73c\ub85c) \uc644\uc131\ub41c \uadf8\ub9bc\uc744 \ucc45\uc0c1\uc5d0\uc11c \ub4e4\uc5b4 \uc62c\ub9b0 \uc544\ub2f4\uc740 \uae30\uc068\uc5d0 \ub118\uccd0 \ud65c\uc9dd \uc6c3\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \uacc1\uc73c\ub85c \ub2e4\uac00\uc628 \uc544\ube60\ub3c4 \uac10\ud0c4\ud558\uba70 \uc544\ub2f4\uc744 \ub530\ub73b\ud558\uac8c \uc548\uc544 \uc8fc\uc168\uc2b5\ub2c8\ub2e4. \u2026 \u300c\uc544\ube60, \ud558\ub098\ub2d8\uc740 \uc815\ub9d0 \ub180\ub78d\uace0 \uba4b\uc9c4 \ubd84\uc774\uc138\uc694. \uc800\ub97c \ub9cc\ub4dc\uc2dc\uace0 \uc81c \ubaa8\ub4e0 \uc21c\uac04\uc744 \uc778\ub3c4\ud558\uc2dc\ub294 \ud558\ub098\ub2d8\uc758 \uc77c\ud558\uc2ec\uc740 \ucc38\uc73c\ub85c \ub180\ub77c\uc6cc\uc694!\u300d \uc544\ub2f4\uc740 \uc628 \ub9c8\uc74c\uc73c\ub85c \ud558\ub098\ub2d8\uc744 \ucc2c\uc591\ud588\uc2b5\ub2c8\ub2e4. \u2026 \uc544\ub2f4\uc740 \uc774\uc81c \uc790\uc2e0\uc758 \uc2e4\uc218\uc870\ucc28\ub3c4 \ud558\ub098\ub2d8\uc758 \uc120\ud558\uc2e0 \uc190\uae38 \uc548\uc5d0\uc11c \ub180\ub77c\uc6b4 \uc740\ud61c\ub85c \ubc14\ub014 \uc218 \uc788\uc74c\uc744 \uc628\uc804\ud788 \uc54c\uac8c \ub418\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \uc5b4\ub5a4 \uc5b4\ub824\uc6c0\uc774\ub098 \uc2e4\uc218\ub97c \ub9cc\ub098\ub354\ub77c\ub3c4 \uc26c\uc9c0 \uc54a\uace0 \uc77c\ud558\uc2dc\ub294 \ud558\ub098\ub2d8\uc774 \uacc4\uc2dc\uae30\uc5d0, \uc544\ub2f4\uc758 \ub9c8\uc74c\uc740 \uc5b8\uc81c\ub098 \uc548\uc804\ud558\uace0 \ub4e0\ub4e0\ud588\uc2b5\ub2c8\ub2e4."
+];
+var TOTAL_PAGES = narrations.length;
+var currentIdx = -1;
+var reading = false;
+
+function pageElements() { return document.querySelectorAll('.page'); }
+function audioElements() { return document.querySelectorAll('.page audio'); }
+
+function clearHighlight() {
+  pageElements().forEach(function (p) { p.classList.remove('active-page'); });
+}
+
+function highlight(idx) {
+  clearHighlight();
+  var all = pageElements();
+  if (all[idx]) {
+    all[idx].classList.add('active-page');
+    all[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  document.getElementById('read-status').textContent = (idx + 1) + ' / ' + TOTAL_PAGES + ' 페이지';
+}
+
+function readAll() {
+  stopReading();
+  currentIdx = 0;
+  reading = true;
+  playCurrent();
+}
+
+function stopReading() {
+  reading = false;
+  if (HAS_AUDIO) {
+    audioElements().forEach(function (a) {
+      a.pause();
+      a.currentTime = 0;
+      a.onended = null;
+    });
+  } else if (window.speechSynthesis) {
+    speechSynthesis.cancel();
+  }
+  clearHighlight();
+  document.getElementById('read-status').textContent = '';
+}
+
+function finish() {
+  reading = false;
+  clearHighlight();
+  document.getElementById('read-status').textContent = '완료';
+}
+
+function advance() {
+  currentIdx++;
+  // A short gap between pages keeps it from sounding rushed.
+  setTimeout(playCurrent, 700);
+}
+
+function playCurrent() {
+  if (!reading) { return; }
+  if (currentIdx >= TOTAL_PAGES) { finish(); return; }
+  highlight(currentIdx);
+
+  if (HAS_AUDIO) {
+    var track = audioElements()[currentIdx];
+    if (!track) { advance(); return; }
+    track.currentTime = 0;
+    track.onended = function () { if (reading) { advance(); } };
+    var started = track.play();
+    if (started && started.catch) {
+      // Autoplay can be refused; skipping keeps the sequence moving.
+      started.catch(function () { if (reading) { advance(); } });
+    }
+  } else {
+    var u = new SpeechSynthesisUtterance(narrations[currentIdx]);
+    u.lang = 'ko-KR';
+    u.rate = 0.9;
+    u.onend = function () { if (reading) { advance(); } };
+    speechSynthesis.speak(u);
+  }
+}
+</script>
+
+<!-- 10페이지 -->
+
+<div class="page" id="page-1">
+  <div class="page-number">1 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_01.png"
+           alt="페이지 1 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">따스한 아침 햇살이 돌벽 창문으로 부드럽게 스며들고 있었습니다. 열한 살 소년 아담은 방 한구석 나무 책상 앞에 정성껏 자리를 잡고 앉았습니다. 마을 미술 대회에 낼 소중한 그림을 완성하는 날이었기 때문입니다. 책상 위에는 정성스레 갈아 만든 붉은빛과 푸른빛의 흙 물감들이 작은 토기 그릇에 가지런히 놓여 있었습니다. 아담은 며칠 동안 정성을 다해 넓은 양피지 위에 푸른 들판과 언덕을 그려 왔습니다. 가느다란 갈대 붓을 쥔 아담의 손끝은 조금도 흐트러짐 없이 조심스러웠습니다. 완벽하게 멋진 작품을 완성하여 사람들에게 보여 주고 싶은 마음이 가득했습니다. 아담은 숨을 고르며 마지막 들판의 풀잎들을 한 잎 한 잎 세밀하게 채워 나갔습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_01.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-2">
+  <div class="page-number">2 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_02.png"
+           alt="페이지 2 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">마침내 그림의 거의 모든 부분이 완성되어 가고 있었습니다. 아담은 뿌듯한 마음으로 붓을 바꾸기 위해 팔을 뻗었습니다. 바로 그 순간, 아담의 팔꿈치가 물감이 든 작은 옹기그릇을 툭 건드리고 말았습니다. 탁자 위에 놓여 있던 검은 먹물 물통이 기우뚱하더니 그대로 양피지 위로 쏟아졌습니다. 짙고 어두운 검은 물감이 순식간에 그림 한가운데로 번져 나갔습니다. 며칠 동안 공들여 그린 맑고 푸른 들판 위로 흉측하고 거대한 검은 얼룩이 자리를 잡았습니다. 아담은 굳어 버린 채 두 손으로 머리를 감싸 쥐었습니다. 돌이킬 수 없는 끔찍한 실수가 눈앞에서 벌어지고 만 것입니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_02.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-3">
+  <div class="page-number">3 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_03.png"
+           alt="페이지 3 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">아담의 눈에서 뜨거운 눈물이 왈칵 쏟아져 내렸습니다. 아무리 깨끗한 천으로 닦아 내려 해도 검은 자국은 종이 깊숙이 스며들 뿐이었습니다. 「다 망쳐 버렸어. 내 그림은 이제 끝났어.」 아담은 흐느끼며 책상 위에 엎드려 어깨를 떨었습니다. 이번 대회에서 가장 멋진 최고 작품을 만들고 싶었던 꿈이 한순간에 산산조각 났습니다. 완벽하게 해내려 했던 자신의 손으로 모든 것을 망쳤다는 생각에 마음이 너무나 괴로웠습니다. 망가진 그림을 다시 쳐다볼 용기조차 나지 않았습니다. 방 안에는 오직 아담의 슬픈 울음소리만이 가득 울려 퍼졌습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_03.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-4">
+  <div class="page-number">4 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_04.png"
+           alt="페이지 4 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">조용히 문이 열리더니 아빠가 방 안으로 들어오셨습니다. 아빠는 엉망이 된 그림과 눈물범벅이 된 아담을 번갈아 바라보셨습니다. 그러나 아빠는 화를 내거나 나무라지 않으시고, 가만히 다가와 아담의 어깨를 감싸 안아 주셨습니다. 「아담아, 이 방에 울리는 소리에 귀를 기울여 보렴.」 아빠가 벽에 걸린 시계를 가리키며 부드러운 목소리로 말씀하셨습니다. 조용한 방 안에서 시계 추가 일정한 소리를 내며 규칙적으로 움직이고 있었습니다. 째깍, 째깍, 쉬지 않고 울리는 소리가 아담의 귀에 닿았습니다. 아담은 훌쩍이면서 눈가를 훔치고 아빠의 얼굴을 올려다보았습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_04.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-5">
+  <div class="page-number">5 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_05.png"
+           alt="페이지 5 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">「이 시계 소리처럼, 하나님은 우리가 슬퍼할 때나 실수했을 때도 결코 쉬지 않고 일하고 계신단다.」 아빠가 다정한 눈빛으로 아담의 손을 꼭 쥐어 주셨습니다. 아담은 코를 훌쩍이며 작은 목소리로 되물었습니다. 「하지만 아빠, 제가 실수로 그림을 완전히 망쳐 버렸는걸요.」 아빠는 빙그레 미소를 지으시며 고개를 저으셨습니다. 「하나님은 우리가 저지른 실수보다 훨씬 크고 지혜로우신 분이란다. 우리가 보지 못하는 순간에도 하나님은 우리를 위해 가장 좋은 길을 준비하고 계시지. 하나님은 결코 졸지도 않으시고 쉬지도 않으신단다.」 아빠의 든든한 말씀에 아담의 요동치던 마음이 조금씩 가라앉기 시작했습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_05.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-6">
+  <div class="page-number">6 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_06.png"
+           alt="페이지 6 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">아빠는 옛이야기를 들려주듯 차분하게 말씀을 이어가셨습니다. 「성경 속 요셉의 이야기를 기억하니? 형들의 미움을 받아 먼 나라에 종으로 팔려 가고, 억울하게 감옥에 갇히기까지 했단다. 겉으로 보기에는 요셉의 인생이 완전히 망가진 것처럼 보였지. 하지만 하나님은 그 캄캄한 시간 속에서도 쉬지 않고 요셉을 위해 일하고 계셨단다. 마침내 하나님은 그 모든 어려움을 바꾸어 수많은 사람의 목숨을 구하는 큰일을 이루셨지. 사람의 눈에는 실수나 실패처럼 보여도, 하나님은 그것조차 놀라운 선으로 바꾸시는 분이란다.」 아빠의 이야기를 들으며 아담의 마음에 작은 희망의 불씨가 피어올랐습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_06.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-7">
+  <div class="page-number">7 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_07.png"
+           alt="페이지 7 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">아빠가 방을 나간 뒤, 아담은 조용히 무릎을 꿇고 두 손을 모았습니다. 방 안에는 여전히 시계의 째깍거리는 소리가 하나님의 일하심처럼 울리고 있었습니다. 「하나님, 제가 실수로 소중한 그림을 망쳐서 너무 속상했어요. 하지만 하나님께서 지금도 저를 위해 일하고 계심을 믿어요. 저에게 지혜를 주셔서 이 실수를 이겨 낼 수 있게 도와주세요.」 아담은 마음을 다해 짧고 진실한 기도를 올려 드렸습니다. 기도를 마치고 눈을 뜨자, 신기하게도 가슴을 짓누르던 답답함이 사라지고 평안이 찾아왔습니다. 아담은 다시 책상 앞으로 다가가 양피지 위의 검은 얼룩을 물끄러미 바라보았습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_07.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-8">
+  <div class="page-number">8 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_08.png"
+           alt="페이지 8 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">얼룩을 자세히 들여다보던 아담의 눈이 번쩍 뜨였습니다. 조금 전까지만 해도 흉측하게만 보이던 검은 물감 자국이 다르게 보이기 시작했습니다. 얼룩의 둥글고 넓적한 모양이 마치 하늘에 피어오른 짙은 구름처럼 보였던 것입니다. 「그래, 이건 메마른 땅에 시원한 비를 내려 주는 먹구름이야!」 아담의 입가에 환한 미소가 번졌습니다. 검은 물감은 그림을 망친 방해물이 아니라, 새로운 생명을 불러올 비구름이 될 수 있었습니다. 아담은 주저 없이 붓을 들어 물을 적시고 먹구름의 가장자리를 부드럽게 다듬기 시작했습니다. 두려움은 사라지고 설렘과 기대감이 아담의 손끝을 채웠습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_08.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-9">
+  <div class="page-number">9 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_09.png"
+           alt="페이지 9 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">아담은 짙은 먹구름 아래로 은빛 빗줄기들을 가늘고 촘촘하게 그려 넣었습니다. 하늘에서 쏟아지는 시원한 단비가 메마른 들판을 촉촉하게 적시는 모습이 생생하게 표현되었습니다. 비를 맞은 들판 아래쪽에는 화사한 붉은색과 노란색, 보랏빛 물감으로 아름다운 들꽃들을 하나둘 피워 냈습니다. 비구름이 없었다면 결코 피어날 수 없었던 눈부신 꽃밭이었습니다. 검은 얼룩은 더 이상 실패의 흔적이 아니었습니다. 푸른 들판과 단비, 싱그러운 꽃들이 어우러져 그림은 처음 계획했던 것보다 훨씬 더 풍성하고 감동적인 명작으로 변해 갔습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_09.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-10">
+  <div class="page-number">10 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_10.png"
+           alt="페이지 10 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">완성된 그림을 책상에서 들어 올린 아담은 기쁨에 넘쳐 활짝 웃었습니다. 곁으로 다가온 아빠도 감탄하며 아담을 따뜻하게 안아 주셨습니다. 「아빠, 하나님은 정말 놀랍고 멋진 분이세요. 저를 만드시고 제 모든 순간을 인도하시는 하나님의 일하심은 참으로 놀라워요!」 아담은 온 마음으로 하나님을 찬양했습니다. 아담은 이제 자신의 실수조차도 하나님의 선하신 손길 안에서 놀라운 은혜로 바뀔 수 있음을 온전히 알게 되었습니다. 어떤 어려움이나 실수를 만나더라도 쉬지 않고 일하시는 하나님이 계시기에, 아담의 마음은 언제나 안전하고 든든했습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_10.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+
+<!-- 부모용 요약 -->
+<div class="parents-section">
+  <details>
+    <summary>📋 부모님을 위한 설교 말씀 분석 보기</summary>
+    <div class="parents-content"><h2>1. 본문과 배경</h2>
+<p>아이들은 성장하면서 사소한 실수나 실패 앞에서도 깊은 좌절감을 느끼곤 합니다. 완벽하게 해내고 싶었던 마음이 클수록 자신의 실수를 용납하기 어려워합니다. 이번 이야기는 구약 성경 창세기에 등장하는 '요셉의 삶'(창세기 50:20)과 로마서 8장 28절의 원리를 바탕으로 합니다. 요셉은 형들의 시기와 억울한 누명으로 깊은 고난을 겪었지만, 하나님께서는 그 모든 시간과 사건을 선하게 엮으시어 많은 사람의 생명을 구하는 통로로 삼으셨습니다. 성경은 우리의 연약함과 뜻밖의 실수조차 하나님의 크신 지혜 안에서 선하게 사용될 수 있음을 증언합니다.</p>
+<h2>2. 이야기의 흐름</h2>
+<p>미술 대회 출품을 위해 온 정성을 다해 그림을 그리던 소년 아담은, 마무리를 앞두고 물통을 잘못 건드려 검은 물감을 그림 위에 크게 쏟고 맙니다. 온 힘을 쏟은 그림을 망쳤다는 생각에 아담은 눈물을 흘리며 좌절합니다. 그때 곁으로 다가온 아빠는 방 안의 규칙적인 소리를 통해 아담을 위로하며, 우리가 깨닫지 못하는 순간에도 하나님은 쉬지 않고 일하고 계심을 상기시킵니다. 아빠가 들려준 요셉의 이야기를 들으며 아담은 마음의 평안을 되찾고, 하나님께 지혜를 구하는 기도를 드립니다. 기도를 마친 아담은 흉측해 보이던 검은 얼룩에서 비를 품은 먹구름의 형상을 발견합니다. 아담은 얼룩을 먹구름으로 바꾸고, 그 아래로 단비를 맞으며 피어나는 아름다운 꽃들을 그려 넣어 처음보다 훨씬 깊이 있는 작품을 완성합니다. 실수의 자리에서도 여전히 일하시는 하나님의 놀라운 섭리를 깨달은 아담은 큰 감사와 기쁨을 품게 됩니다.</p>
+<h3>그래서 나는 어떻게 해야 하는가</h3>
+<p>오늘부터 아이가 뜻밖의 실수를 하거나 속상해할 때, 먼저 꾸짖거나 성급히 해결해 주려 하기보다 아이의 상처받은 마음을 충분히 안아주고, 함께 잠시 멈추어 하나님의 지혜와 도우심을 구하는 기도를 드리겠습니다.</p>
+<h2>3. 핵심 신학 개념</h2>
+<p>하나님의 주권과 섭리(Providence)는 인간의 유한함이나 실수에 갇히지 않습니다. 하나님께서 나쁜 일이나 실수를 억지로 일으키시는 것은 아니지만, 인간의 실수나 세상의 고난조차도 뛰어넘어 최종적으로 하나님의 선한 목적을 이루어 내십니다. 이를 통해 우리는 실패의 두려움에서 벗어나 언제나 하나님을 신뢰하는 참된 평안을 얻을 수 있습니다.</p>
+<h2>4. 아이에게 전달할 핵심 메시지</h2>
+<p>우리가 실수하거나 계획이 틀어졌을 때도 하나님은 우리를 포기하지 않으시며, 언제나 우리를 위해 가장 좋은 길을 준비하고 계십니다. 실수했다고 모든 것이 끝난 것이 아닙니다. 하나님께 지혜를 구할 때, 하나님은 우리의 작은 실수마저도 놀랍고 아름다운 이야기의 일부로 바꾸어 주십니다.</p>
+<h2>5. 대화 질문 (부모-자녀)</h2>
+<ul>
+<li>아담이 공들여 그리던 그림에 검은 물감을 쏟았을 때 어떤 기분이었을까요? 우리도 무언가를 열심히 준비하다가 실수해서 속상했던 적이 있었나요?</li>
+<li>요셉이 형들의 미움을 받고 억울하게 감옥에 갇혔을 때, 하나님은 무엇을 하고 계셨을까요?</li>
+<li>내가 실수했거나 어려운 일을 만났을 때, 하나님께서 나를 돕고 계신다는 것을 기억하기 위해 우리는 어떻게 기도할 수 있을까요?</li>
+</ul></div>
+  </details>
+</div>
+
+<!-- 찬양 추천 -->
+
+<div class="parents-section">
+  <details>
+    <summary>🎵 말씀과 함께하는 찬양 추천</summary>
+    <div class="songs-content">
+      
+      <div class="song-item">
+        <div class="song-title">선하신 목자 (The Lord Is My Shepherd)</div>
+        <div class="song-artist">어노인팅 (Anointing)</div>
+        <div class="song-reason">우리가 길을 잃거나 실수할 때에도 우리를 바르고 선한 길로 인도하시는 하나님의 신실하신 성품을 묵상하게 합니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%EC%84%A0%ED%95%98%EC%8B%A0+%EB%AA%A9%EC%9E%90+%28The+Lord+Is+My+Shepherd%29+%EC%96%B4%EB%85%B8%EC%9D%B8%ED%8C%85+%28Anointing%29"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+      <div class="song-item">
+        <div class="song-title">하나님의 열심</div>
+        <div class="song-artist">마커스워십 (Markers Worship)</div>
+        <div class="song-reason">우리가 연약하여 넘어질 때조차 쉬지 않고 우리 삶에서 선을 이루어 가시는 하나님의 일하심을 잘 고백해 줍니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%ED%95%98%EB%82%98%EB%8B%98%EC%9D%98+%EC%97%B4%EC%8B%AC+%EB%A7%88%EC%BB%A4%EC%8A%A4%EC%9B%8C%EC%8B%AD+%28Markers+Worship%29"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+      <div class="song-item">
+        <div class="song-title">주가 일하시네</div>
+        <div class="song-artist">이혁진</div>
+        <div class="song-reason">우리가 모든 것을 내려놓고 주님께 맡길 때 하나님께서 일하기 시작하신다는 핵심 메시지와 깊이 맞닿아 있습니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%EC%A3%BC%EA%B0%80+%EC%9D%BC%ED%95%98%EC%8B%9C%EB%84%A4+%EC%9D%B4%ED%98%81%EC%A7%84"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+      <div class="song-item">
+        <div class="song-title">꽃들도 (花も)</div>
+        <div class="song-artist">JWorship</div>
+        <div class="song-reason">비가 내린 뒤 먹구름 아래에서 피어나는 꽃들처럼, 하나님의 은혜 안에서 모든 피조물이 회복되고 찬양함을 노래합니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%EA%BD%83%EB%93%A4%EB%8F%84+%28%E8%8A%B1%E3%82%82%29+JWorship"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+      <div class="song-item">
+        <div class="song-title">Way Maker (길을 만드시는 분)</div>
+        <div class="song-artist">Leeland / 마커스워십</div>
+        <div class="song-reason">우리가 보지 못하고 느끼지 못하는 순간에도 언제나 길을 만드시고 일하시는 하나님을 신뢰하도록 격려합니다.</div>
+        <a href="https://www.youtube.com/results?search_query=Way+Maker+%28%EA%B8%B8%EC%9D%84+%EB%A7%8C%EB%93%9C%EC%8B%9C%EB%8A%94+%EB%B6%84%29+Leeland+%2F+%EB%A7%88%EC%BB%A4%EC%8A%A4%EC%9B%8C%EC%8B%AD"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+    </div>
+  </details>
+</div>
+
+
+<!-- 푸터 -->
+<div class="footer">
+  <p>성경 본문 참조: 대한성서공회 —
+    <a href="https://www.bskorea.or.kr" target="_blank">www.bskorea.or.kr</a>
+  </p>
+  <p style="margin-top:8px;">본문 위치: Genesis 50:20</p>
+</div>
+
+</body>
+</html>

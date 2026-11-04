@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>성경 동화책 — 요한복음 6:1-15</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: #fdf6ec; color: #3a2a1a; }
+  .cover {
+    text-align: center; padding: 60px 20px;
+    background: linear-gradient(135deg, #e8d5b0, #c9a96e);
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+  }
+  .cover h1 { font-size: 2.2rem; color: #5a3010; margin-bottom: 12px; }
+  .cover p { font-size: 1.1rem; color: #7a5030; }
+  .bible-badge {
+    margin-top: 24px; padding: 10px 20px;
+    background: #fff8ee; border: 2px solid #c9a96e;
+    border-radius: 20px; font-size: 1rem; color: #5a3010;
+  }
+  .read-all-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: #5a3010; padding: 10px 20px;
+    display: flex; justify-content: center; gap: 12px; align-items: center;
+  }
+  .read-all-bar button {
+    padding: 8px 22px; border: none; border-radius: 20px;
+    font-size: 0.95rem; cursor: pointer; font-weight: bold;
+  }
+  #btn-read-all { background: #c9a96e; color: white; }
+  #btn-read-all:hover { background: #e8c080; }
+  #btn-stop { background: #fff8ee; color: #5a3010; }
+  #btn-stop:hover { background: #ffe8c0; }
+  #read-status { color: #e8d5b0; font-size: 0.85rem; }
+  .page {
+    max-width: 1100px; margin: 40px auto; padding: 20px;
+    background: #fffdf8; border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transition: box-shadow 0.3s;
+  }
+  .page.active-page {
+    box-shadow: 0 0 0 3px #c9a96e, 0 4px 24px rgba(0,0,0,0.12);
+  }
+  .page-number {
+    font-size: 0.85rem; color: #a08060; text-align: right;
+    margin-bottom: 8px;
+  }
+  /* Picture on the left, story text on the right, so a child can look and read together. */
+  .page-body { display: flex; gap: 28px; align-items: flex-start; }
+  .page-figure { flex: 1 1 50%; min-width: 0; }
+  .page-content { flex: 1 1 50%; min-width: 0; display: flex; flex-direction: column; }
+  .page img { width: 100%; border-radius: 12px; display: block; }
+  .page-text {
+    font-size: 1.15rem; line-height: 1.9;
+    color: #3a2a1a; margin-bottom: 8px; padding: 0 4px;
+  }
+  audio { width: 100%; margin-top: 12px; }
+  /* Phones and narrow tablets: stack the picture above the text instead. */
+  @media (max-width: 820px) {
+    .page { max-width: 700px; }
+    .page-body { flex-direction: column; gap: 16px; }
+  }
+  .parents-section {
+    max-width: 700px; margin: 40px auto; padding: 20px;
+  }
+  details {
+    background: #fff8ee; border: 1px solid #c9a96e;
+    border-radius: 12px; padding: 16px;
+  }
+  summary {
+    font-size: 1.1rem; font-weight: bold; color: #5a3010;
+    cursor: pointer; padding: 4px 0;
+  }
+  .parents-content {
+    margin-top: 16px; line-height: 1.9; font-size: 0.95rem;
+  }
+  .parents-content h2 {
+    font-size: 1.05rem; color: #5a3010; margin: 18px 0 6px;
+    border-bottom: 1px solid #e8d5b0; padding-bottom: 4px;
+  }
+  .parents-content p { margin-bottom: 8px; }
+  .parents-content ul { padding-left: 20px; margin-bottom: 8px; }
+  .parents-content li { margin-bottom: 4px; }
+  .songs-content { margin-top: 16px; }
+  .song-item {
+    background: #fffdf8; border: 1px solid #e8d5b0;
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 12px;
+  }
+  .song-title { font-size: 1.05rem; font-weight: bold; color: #5a3010; margin-bottom: 2px; }
+  .song-artist { font-size: 0.88rem; color: #9a7050; margin-bottom: 6px; }
+  .song-reason { font-size: 0.92rem; color: #4a3a2a; line-height: 1.6; margin-bottom: 8px; }
+  .song-youtube {
+    display: inline-block; font-size: 0.82rem; color: #c9843e;
+    text-decoration: none; border: 1px solid #c9843e;
+    border-radius: 12px; padding: 3px 10px;
+  }
+  .song-youtube:hover { background: #c9843e; color: #fff; }
+  .footer {
+    text-align: center; padding: 40px 20px;
+    font-size: 0.85rem; color: #a08060;
+    border-top: 1px solid #e8d5b0; margin-top: 40px;
+  }
+  .footer a { color: #c9a96e; }
+</style>
+</head>
+<body>
+
+<!-- 표지 -->
+<div class="cover">
+  <h1>성경 동화책</h1>
+  <p>어린이를 위한 말씀 이야기</p>
+  <div class="bible-badge">📖 요한복음 6:1-15</div>
+</div>
+
+<!-- 전체 읽어주기 바 -->
+<div class="read-all-bar">
+  <button id="btn-read-all" onclick="readAll()">▶ 전체 읽어주기</button>
+  <button id="btn-stop" onclick="stopReading()">■ 멈추기</button>
+  <span id="read-status"></span>
+</div>
+
+<script>
+// When narration mp3s exist we play those in order; otherwise we fall back to the
+// browser's built-in speech synthesis. Either way one click reads all 10 pages.
+var HAS_AUDIO = true;
+var narrations = [
+  "(\ub530\ub73b\ud558\uac8c) \uc608\uc218\ub2d8\uaed8\uc11c\ub294 \uc81c\uc790\ub4e4\uacfc \ud568\uaed8 \uac08\ub9b4\ub9ac \ud638\uc218 \uac74\ub108\ud3b8 \uc5b8\ub355\uc73c\ub85c \uc62c\ub77c\uac00\uc168\uc2b5\ub2c8\ub2e4. \u2026 \uc9c0\uce5c \ubab8\uc744 \uc7a0\uc2dc \uc26c\uac8c \ud558\ub824\ub358 \ucc38\uc774\uc5c8\uc2b5\ub2c8\ub2e4. \uadf8\ub7ec\ub098 \uc218\ub9ce\uc740 \uc0ac\ub78c\uc774 \uba3c \uae38\uc744 \uac78\uc5b4 \uc608\uc218\ub2d8\uc744 \ub530\ub77c\uc654\uc2b5\ub2c8\ub2e4. \uc0ac\ub78c\ub4e4\uc740 \uc608\uc218\ub2d8\uaed8\uc11c \uc544\ud508 \uc0ac\ub78c\ub4e4\uc744 \uace0\uce58\uc2dc\ub294 \uac83\uc744 \ubcf4\uc558\uc2b5\ub2c8\ub2e4. \u2026 \uadf8\ubd84\uc758 \uc785\uc5d0\uc11c \ub098\uc624\ub294 \uc0dd\uba85\uc758 \ub9d0\uc500\uc744 \ub4e3\uace0\uc790 \ud588\uc2b5\ub2c8\ub2e4. \uc5b8\ub355\uc5d0\ub294 \uc5b4\ub978 \ub0a8\uc790\ub9cc \uc624\ucc9c \uba85\uc774 \ub118\ub294 \uac70\ub300\ud55c \ubb34\ub9ac\uac00 \ubaa8\uc5ec\ub4e4\uc5c8\uc2b5\ub2c8\ub2e4. \uc0b0\ube44\ud0c8\uc740 \uc0ac\ub78c\ub4e4\ub85c \uac00\ub4dd \ucc3c\uc2b5\ub2c8\ub2e4. \u2026 \uc608\uc218\ub2d8\uaed8\uc11c\ub294 \uadf8\ub4e4\uc744 \uc870\uc6a9\ud788 \ubc14\ub77c\ubcf4\uc168\uc2b5\ub2c8\ub2e4.","(\ucc28\ubd84\ud558\uac8c) \uc2dc\uac04\uc774 \ud750\ub974\uc790 \uc5b4\ub290\ub367 \ud574\uac00 \uae30\uc6b8\uba70 \ub4e4\ud310\uc5d0 \ubd89\uc740 \ub178\uc744\uc774 \ub0b4\ub824\uc549\uc558\uc2b5\ub2c8\ub2e4. \u2026 \uc0ac\ub78c\ub4e4\uc740 \ud558\ub8e8 \uc885\uc77c \ub9d0\uc500\uc5d0 \uadc0\ub97c \uae30\uc6b8\uc600\uc2b5\ub2c8\ub2e4. \ubc30\uac00 \uace0\ud508 \uac83\ub3c4 \uc78a\uc740 \ucc44 \uc608\uc218\ub2d8 \uacc1\uc5d0 \uba38\ubb3c\ub800\uc2b5\ub2c8\ub2e4. \ud558\uc9c0\ub9cc \uc800\ub141\uc774 \ub418\uc790 \uc0ac\ub78c\ub4e4\uc758 \ubc43\uc18d\uc5d0\uc11c \uaf2c\ub974\ub975 \uc18c\ub9ac\uac00 \ub098\uae30 \uc2dc\uc791\ud588\uc2b5\ub2c8\ub2e4. \uadf8\uacf3\uc740 \ub9c8\uc744\uc5d0\uc11c \uba40\ub9ac \ub5a8\uc5b4\uc9c4 \uc678\ub534 \uad11\uc57c\uc600\uc2b5\ub2c8\ub2e4. \u2026 \uc8fc\ubcc0\uc5d0\ub294 \ube75\uc744 \uc0b4 \uc218 \uc788\ub294 \uac00\uac8c\ub3c4, \uc2dd\ub2f9\ub3c4 \uc804\ud600 \uc5c6\uc5c8\uc2b5\ub2c8\ub2e4. \uc11c\ub298\ud55c \uc800\ub141 \ubc14\ub78c\uc774 \uc5b8\ub355 \uc704\ub85c \ubd88\uc5b4\uc654\uc2b5\ub2c8\ub2e4. \u2026 \uc9c0\uce5c \uc0ac\ub78c\ub4e4\uc758 \uc5bc\uad74\uc5d0 \ud53c\ub85c\uac00 \ubc88\uc84c\uc2b5\ub2c8\ub2e4.","(\uc9c4\uc9c0\ud558\uac8c) \uc608\uc218\ub2d8\uaed8\uc11c\ub294 \uad76\uc8fc\ub9ac\uace0 \uc9c0\uce5c \ubb34\ub9ac\ub97c \ubc14\ub77c\ubcf4\uc168\uc2b5\ub2c8\ub2e4. \u2026 \uadf8\ub4e4\uc758 \ud615\ud3b8\uc744 \ubd88\uc30d\ud788 \uc5ec\uae30\ub294 \ub9c8\uc74c\uc774 \uac00\ub4dd\ud558\uc168\uc2b5\ub2c8\ub2e4. \uc608\uc218\ub2d8\uaed8\uc11c\ub294 \uacc1\uc5d0 \uc11c \uc788\ub358 \uc81c\uc790 \ube4c\ub9bd\uc744 \ub3cc\uc544\ubcf4\uc168\uc2b5\ub2c8\ub2e4. \ube4c\ub9bd\uc758 \ubbff\uc74c\uc744 \uc2dc\ud5d8\ud574 \ubcf4\uc2dc\uace0\uc790 \uc870\uc6a9\ud788 \ubb3c\uc73c\uc168\uc2b5\ub2c8\ub2e4. \u2026 \u300c\uc6b0\ub9ac\uac00 \uc5b4\ub514\uc5d0\uc11c \ube75\uc744 \uc0ac\uc11c \uc774 \ub9ce\uc740 \uc0ac\ub78c\uc744 \uba39\uc774\uaca0\ub290\ub0d0?\u300d \uc608\uc218\ub2d8\uc758 \ubb3c\uc74c\uc5d0 \ube4c\ub9bd\uc740 \uae5c\uc9dd \ub180\ub77c \ub208\uc744 \ud06c\uac8c \ub5b4\uc2b5\ub2c8\ub2e4. \u2026 \ube4c\ub9bd\uc740 \ub208\uc55e\uc5d0 \uac00\ub4dd\ud55c \uad70\uc911\uc744 \ub458\ub7ec\ubcf4\uc558\uc2b5\ub2c8\ub2e4. \uadf8\uc758 \uba38\ub9bf\uc18d\uc774 \ubcf5\uc7a1\ud574\uc84c\uc2b5\ub2c8\ub2e4.","(\uac71\uc815\uc2a4\ub7ec\uc6b4 \ubaa9\uc18c\ub9ac\ub85c) \ube4c\ub9bd\uc740 \uc7ac\ube68\ub9ac \uacc4\uc0b0\uc744 \ud574\ubcf4\uace0\ub294 \uace0\uac1c\ub97c \uc808\ub808\uc808\ub808 \uc800\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \u300c\uc608\uc218\ub2d8, \uc774 \uc0ac\ub78c\ub4e4\uc5d0\uac8c \ube75\uc744 \uc544\uc8fc \uc870\uae08\uc529\ub9cc \ub098\ub204\uc5b4 \uc900\ub2e4\uace0 \ud574\ub3c4 \uc5c4\uccad\ub098\uac8c \ub9ce\uc740 \ub3c8\uc774 \ub4ed\ub2c8\ub2e4.\u300d \ube4c\ub9bd\uc758 \ubaa9\uc18c\ub9ac\uc5d0\ub294 \ub9c9\ub9c9\ud568\uc774 \ubb3b\uc5b4 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \u300c\uc6b0\ub9ac\uc5d0\uac8c\ub294 \uadf8\ub9cc\ud55c \ub3c8\ub3c4 \uc5c6\uace0, \uc774 \uad11\uc57c\uc5d0\uc11c \uc74c\uc2dd\uc744 \uad6c\ud560 \uc218\ub3c4 \uc5c6\uc2b5\ub2c8\ub2e4.\u300d \uacc1\uc5d0 \uc11c \uc788\ub358 \ub2e4\ub978 \uc81c\uc790\ub4e4\ub3c4 \ud55c\uc228\uc744 \ub0b4\uc26c\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \uc774 \uac70\ub300\ud55c \ubb34\ub9ac\ub97c \uba39\uc774\ub294 \uc77c\uc740 \ubd88\uac00\ub2a5\ud574 \ubcf4\uc600\uc2b5\ub2c8\ub2e4. \ubaa8\ub450\uc758 \uc5bc\uad74\uc5d0 \uadfc\uc2ec\uc758 \uadf8\ub9bc\uc790\uac00 \uc9d9\uac8c \ub4dc\ub9ac\uc6e0\uc2b5\ub2c8\ub2e4.","(\uc870\uc2ec\uc2a4\ub7fd\uac8c) \uadf8\ub54c \ub2e4\ub978 \uc81c\uc790\uc778 \uc548\ub4dc\ub808\uac00 \ud55c \uc5b4\ub9b0\uc544\uc774\uc758 \uc190\uc744 \uc7a1\uace0 \ub2e4\uac00\uc654\uc2b5\ub2c8\ub2e4. \u2026 \uc544\uc774\uc758 \uc190\uc5d0\ub294 \uc18c\ubc15\ud55c \uc791\uc740 \ubc14\uad6c\ub2c8\uac00 \ub4e4\ub824 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \uc548\ub4dc\ub808\uac00 \uc870\uc2ec\uc2a4\ub7fd\uac8c \uc785\uc744 \uc5f4\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \u300c\uc608\uc218\ub2d8, \uc5ec\uae30 \ud55c \uc544\uc774\uac00 \ubcf4\ub9ac\ub5a1 \ub2e4\uc12f \uac1c\uc640 \ubb3c\uace0\uae30 \ub450 \ub9c8\ub9ac\ub97c \uac00\uc9c0\uace0 \uc788\uc2b5\ub2c8\ub2e4.\u300d \uc548\ub4dc\ub808\ub294 \ub9d0\uc744 \uc787\ub2e4\uac00 \uba38\ubb47\uac70\ub838\uc2b5\ub2c8\ub2e4. \u2026 \u300c\ud558\uc9c0\ub9cc \uc774 \ub9ce\uc740 \uc0ac\ub78c\uc5d0\uac8c \uc774\uac83\uc774 \ubb34\uc2a8 \uc18c\uc6a9\uc774 \uc788\uaca0\uc2b5\ub2c8\uae4c?\u300d \uc544\uc774\ub294 \uc218\uc90d\uc740 \ud45c\uc815\uc73c\ub85c \ubc14\uad6c\ub2c8\ub97c \ud488\uc5d0 \uc548\uace0 \uc788\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \uc5b4\ub978 \ud55c \uc0ac\ub78c\uc758 \ub07c\ub2c8\uc5d0\ub3c4 \ud131\uc5c6\uc774 \ubaa8\uc790\ub780 \uc591\uc774\uc5c8\uc2b5\ub2c8\ub2e4.","(\ub530\ub73b\ud558\uace0 \ubc85\ucc2c \ubaa9\uc18c\ub9ac\ub85c) \uc544\uc774\uac00 \ub0b4\ubbfc \uac83\uc740 \uac00\ub09c\ud55c \uc0ac\ub78c\ub4e4\uc774 \uba39\ub294 \uac70\uce5c \ubcf4\ub9ac\ube75\uc774\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \uc544\uc774\uc5d0\uac8c\ub294 \ub108\ubb34\ub098 \uc18c\uc911\ud55c \uc800\ub141 \uc2dd\uc0ac\uc600\uc2b5\ub2c8\ub2e4. \uc544\uc774\ub294 \uae30\uaebc\uc774 \uc790\uc2e0\uc758 \ub3c4\uc2dc\ub77d\uc744 \uc608\uc218\ub2d8\uaed8 \ub0b4\ubc00\uc5c8\uc2b5\ub2c8\ub2e4. \uc608\uc218\ub2d8\uaed8\uc11c\ub294 \uc544\uc774\uc758 \ub9d1\uc740 \ub208\ub9dd\uc6b8\uc744 \ub0b4\ub824\ub2e4\ubcf4\uc168\uc2b5\ub2c8\ub2e4. \u2026 \uc791\uc740 \uac83\uc744 \uc544\ub08c\uc5c6\uc774 \ubc14\uce5c \uc544\uc774\uc758 \uc608\uc05c \ub9c8\uc74c\uc744 \ubcf4\uc168\uc2b5\ub2c8\ub2e4. \uc608\uc218\ub2d8\uc758 \uc5bc\uad74\uc5d0 \ud658\ud55c \ubbf8\uc18c\uac00 \ubc88\uc84c\uc2b5\ub2c8\ub2e4. \u2026 \uc8fc\ub2d8\uaed8\uc11c\ub294 \uadf8 \uc791\uc740 \ub3c4\uc2dc\ub77d\uc744 \uae4a\uc774 \uae30\ubed0\ud558\uc168\uc2b5\ub2c8\ub2e4. \uc544\ubb34\ub3c4 \uc8fc\ubaa9\ud558\uc9c0 \uc54a\ub358 \uc791\uc740 \uc120\ubb3c\uc774 \uc8fc\ub2d8\uc758 \uc190\uc5d0 \uc804\ud574\uc84c\uc2b5\ub2c8\ub2e4.","(\uc5c4\uc219\ud558\uace0 \uc794\uc794\ud558\uac8c) \uc608\uc218\ub2d8\uaed8\uc11c\ub294 \uc81c\uc790\ub4e4\uc5d0\uac8c \uc0ac\ub78c\ub4e4\uc744 \uc549\ud788\ub77c\uace0 \ub9d0\uc500\ud558\uc168\uc2b5\ub2c8\ub2e4. \u2026 \u300c\uc0ac\ub78c\ub4e4\uc744 \ud478\ub978 \ud480\ubc2d \uc704\uc5d0 \ubb34\ub9ac \uc9c0\uc5b4 \uc549\uac8c \ud558\uc5ec\ub77c.\u300d \uc0ac\ub78c\ub4e4\uc740 \uc5b4\ub9ac\ub465\uc808\ud574\ud558\uba74\uc11c\ub3c4 \ub9d0\uc500\uc5d0 \uc21c\uc885\ud588\uc2b5\ub2c8\ub2e4. \u2026 \uc624\uc2ed \uba85\uc529, \ubc31 \uba85\uc529 \uc904\uc744 \uc9c0\uc5b4 \uc794\ub514 \uc704\uc5d0 \uc639\uae30\uc885\uae30 \uc790\ub9ac\ub97c \uc7a1\uc558\uc2b5\ub2c8\ub2e4. \uc6c5\uc131\uac70\ub9ac\ub358 \ub4e4\ud310\uc774 \uc810\ucc28 \uace0\uc694\ud574\uc84c\uc2b5\ub2c8\ub2e4. \u2026 \uc0ac\ub78c\ub4e4\uc758 \ub208\uae38\uc774 \uc5b8\ub355 \uc704\uc758 \uc608\uc218\ub2d8\uaed8\ub85c \uc3e0\ub838\uc2b5\ub2c8\ub2e4. \uc544\ubb34\uac83\ub3c4 \uc5c6\ub294 \ube48 \ub4e4\ud310\uc5d0 \uc9c8\uc11c\uc640 \uae30\ub300\uac10\uc774 \uac00\ub4dd \ucc3c\uc2b5\ub2c8\ub2e4. \u2026 \ubaa8\ub450\uac00 \uc870\uc6a9\ud788 \uc228\uc744 \uc8fd\uc600\uc2b5\ub2c8\ub2e4.","(\uacbd\uac74\ud558\uac8c) \uc608\uc218\ub2d8\uaed8\uc11c\ub294 \ubcf4\ub9ac\ub5a1 \ub2e4\uc12f \uac1c\uc640 \ubb3c\uace0\uae30 \ub450 \ub9c8\ub9ac\ub97c \uc190\uc5d0 \ub4dc\uc168\uc2b5\ub2c8\ub2e4. \u2026 \uadf8\ub9ac\uace0 \uace0\uac1c\ub97c \ub4e4\uc5b4 \ud558\ub298\uc744 \uc6b0\ub7ec\ub7ec\ubcf4\uc168\uc2b5\ub2c8\ub2e4. \ud558\ub098\ub2d8 \uc544\ubc84\uc9c0\uaed8 \uc628 \ub9c8\uc74c\uc73c\ub85c \uac10\uc0ac \uae30\ub3c4\ub97c \ub4dc\ub9ac\uc168\uc2b5\ub2c8\ub2e4. \u2026 \ubd80\uc871\ud55c \ud615\ud3b8 \uc18d\uc5d0\uc11c\ub3c4 \uba3c\uc800 \uac10\uc0ac\ud558\uc2e0 \uac83\uc785\ub2c8\ub2e4. \uae30\ub3c4\uac00 \ub05d\ub098\uc790 \uc608\uc218\ub2d8\uaed8\uc11c\ub294 \ube75\uc744 \ub5bc\uc5b4 \uc81c\uc790\ub4e4\uc5d0\uac8c \uac74\ub124\uc8fc\uc168\uc2b5\ub2c8\ub2e4. \u2026 \uadf8\uacf3\uc5d0 \uc788\ub358 \ubaa8\ub4e0 \uc0ac\ub78c\uc774 \uc228\uc744 \uba48\ucd94\uace0 \uc9c0\ucf1c\ubcf4\uc558\uc2b5\ub2c8\ub2e4. \uad11\uc57c\uc758 \uce68\ubb35 \uc18d\uc5d0\uc11c \ub180\ub77c\uc6b4 \uae30\uc801\uc774 \uc2dc\uc791\ub418\uace0 \uc788\uc5c8\uc2b5\ub2c8\ub2e4.","(\uae30\uc068\uacfc \uacbd\uc774\ub85c\uc6c0\uc5d0 \ucc28\uc11c) \uc81c\uc790\ub4e4\uc740 \uc608\uc218\ub2d8\uaed8\uc11c \ub5bc\uc5b4 \uc8fc\uc2dc\ub294 \ube75\uacfc \ubb3c\uace0\uae30\ub97c \ubc14\uad6c\ub2c8\uc5d0 \ub2f4\uc544 \uc0ac\ub78c\ub4e4\uc5d0\uac8c \ub0a0\ub790\uc2b5\ub2c8\ub2e4. \u2026 \uadf8\ub7f0\ub370 \ucc38\uc73c\ub85c \uc2e0\uae30\ud55c \uc77c\uc774 \ubc8c\uc5b4\uc84c\uc2b5\ub2c8\ub2e4. \ubc14\uad6c\ub2c8\uc5d0\uc11c \uc74c\uc2dd\uc744 \ub098\ub204\uc5b4 \uc8fc\uc5b4\ub3c4 \ube75\uacfc \ubb3c\uace0\uae30\uac00 \uc904\uc5b4\ub4e4\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \u2026 \ub098\ub204\uba74 \ub098\ub20c\uc218\ub85d \ubc14\uad6c\ub2c8\uc5d0 \uc74c\uc2dd\uc774 \uc0d8\uc19f\ub4ef \uac00\ub4dd \ucc3c\uc2b5\ub2c8\ub2e4. \uc0ac\ub78c\ub4e4\uc740 \ub530\ub73b\ud55c \ube75\uacfc \ubb3c\uace0\uae30\ub97c \ubc30\ubd80\ub974\uac8c \uba39\uc5c8\uc2b5\ub2c8\ub2e4. \u2026 \uad76\uc8fc\ub838\ub358 \uc544\uc774\ub4e4\ub3c4, \uc5b4\ub978\ub4e4\ub3c4 \ubaa8\ub450 \ub9cc\uc871\uc2a4\ub7fd\uac8c \ubbf8\uc18c\ub97c \uc9c0\uc5c8\uc2b5\ub2c8\ub2e4. \uad11\uc57c\ub294 \uc21c\uc2dd\uac04\uc5d0 \ud48d\uc131\ud55c \ucd95\uc81c\uc758 \uc790\ub9ac\uac00 \ub418\uc5c8\uc2b5\ub2c8\ub2e4.","(\uae4a\uc740 \uac10\ub3d9\uc73c\ub85c) \ubaa8\ub4e0 \uc0ac\ub78c\uc774 \ubc30\ubd88\ub9ac \uba39\uc740 \ub4a4 \uc608\uc218\ub2d8\uaed8\uc11c \ub9d0\uc500\ud558\uc168\uc2b5\ub2c8\ub2e4. \u2026 \u300c\ub0a8\uc740 \uc870\uac01\uc744 \ub2e4 \ubaa8\uc544\uc11c \ud558\ub098\ub3c4 \ubc84\ub9ac\uc9c0 \uc54a\ub3c4\ub85d \ud558\uc5ec\ub77c.\u300d \uc81c\uc790\ub4e4\uc774 \ub4e4\ud310\uc744 \ub2e4\ub2c8\uba70 \ub0a8\uc740 \ube75\uacfc \ubb3c\uace0\uae30\ub97c \ubaa8\uc558\uc2b5\ub2c8\ub2e4. \u2026 \ub180\ub78d\uac8c\ub3c4 \uac70\ub450\uc5b4\ub4e4\uc778 \uc74c\uc2dd\uc774 \ud070 \ubc14\uad6c\ub2c8 \uc5f4\ub450 \uac1c\uc5d0 \uac00\ub4dd \ucc3c\uc2b5\ub2c8\ub2e4. \uc5b4\ub9b0\uc544\uc774\uc758 \uc791\uc740 \ub3c4\uc2dc\ub77d \ud558\ub098\uac00 \uc608\uc218\ub2d8\uc758 \uc190\uc5d0 \ub4e4\ub838\uc744 \ub54c \uc140 \uc218 \uc5c6\uc774 \ub9ce\uc740 \uc0ac\ub78c\uc744 \ucc44\uc6b0\uace0\ub3c4 \ub118\ucce4\uc2b5\ub2c8\ub2e4. \u2026 \uc8fc\ub2d8\uaed8\uc11c\ub294 \uc6b0\ub9ac\uc758 \uc791\uc740 \uc815\uc131\uc744 \ud1b5\ud574 \uac00\uc7a5 \ud06c\uace0 \ud48d\uc131\ud55c \uc0ac\ub791\uc758 \uae30\uc801\uc744 \ubca0\ud480\uc5b4 \uc8fc\uc2ed\ub2c8\ub2e4."
+];
+var TOTAL_PAGES = narrations.length;
+var currentIdx = -1;
+var reading = false;
+
+function pageElements() { return document.querySelectorAll('.page'); }
+function audioElements() { return document.querySelectorAll('.page audio'); }
+
+function clearHighlight() {
+  pageElements().forEach(function (p) { p.classList.remove('active-page'); });
+}
+
+function highlight(idx) {
+  clearHighlight();
+  var all = pageElements();
+  if (all[idx]) {
+    all[idx].classList.add('active-page');
+    all[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  document.getElementById('read-status').textContent = (idx + 1) + ' / ' + TOTAL_PAGES + ' 페이지';
+}
+
+function readAll() {
+  stopReading();
+  currentIdx = 0;
+  reading = true;
+  playCurrent();
+}
+
+function stopReading() {
+  reading = false;
+  if (HAS_AUDIO) {
+    audioElements().forEach(function (a) {
+      a.pause();
+      a.currentTime = 0;
+      a.onended = null;
+    });
+  } else if (window.speechSynthesis) {
+    speechSynthesis.cancel();
+  }
+  clearHighlight();
+  document.getElementById('read-status').textContent = '';
+}
+
+function finish() {
+  reading = false;
+  clearHighlight();
+  document.getElementById('read-status').textContent = '완료';
+}
+
+function advance() {
+  currentIdx++;
+  // A short gap between pages keeps it from sounding rushed.
+  setTimeout(playCurrent, 700);
+}
+
+function playCurrent() {
+  if (!reading) { return; }
+  if (currentIdx >= TOTAL_PAGES) { finish(); return; }
+  highlight(currentIdx);
+
+  if (HAS_AUDIO) {
+    var track = audioElements()[currentIdx];
+    if (!track) { advance(); return; }
+    track.currentTime = 0;
+    track.onended = function () { if (reading) { advance(); } };
+    var started = track.play();
+    if (started && started.catch) {
+      // Autoplay can be refused; skipping keeps the sequence moving.
+      started.catch(function () { if (reading) { advance(); } });
+    }
+  } else {
+    var u = new SpeechSynthesisUtterance(narrations[currentIdx]);
+    u.lang = 'ko-KR';
+    u.rate = 0.9;
+    u.onend = function () { if (reading) { advance(); } };
+    speechSynthesis.speak(u);
+  }
+}
+</script>
+
+<!-- 10페이지 -->
+
+<div class="page" id="page-1">
+  <div class="page-number">1 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_01.png"
+           alt="페이지 1 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">예수님께서는 제자들과 함께 갈릴리 호수 건너편 언덕으로 올라가셨습니다. 지친 몸을 잠시 쉬게 하려던 참이었습니다. 그러나 수많은 사람이 먼 길을 걸어 예수님을 따라왔습니다. 사람들은 예수님께서 아픈 사람들을 고치시는 것을 보았습니다. 그분의 입에서 나오는 생명의 말씀을 듣고자 했습니다. 언덕에는 어른 남자만 오천 명이 넘는 거대한 무리가 모여들었습니다. 산비탈은 사람들로 가득 찼습니다. 예수님께서는 그들을 조용히 바라보셨습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_01.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-2">
+  <div class="page-number">2 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_02.png"
+           alt="페이지 2 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">시간이 흐르자 어느덧 해가 기울며 들판에 붉은 노을이 내려앉았습니다. 사람들은 하루 종일 말씀에 귀를 기울였습니다. 배가 고픈 것도 잊은 채 예수님 곁에 머물렀습니다. 하지만 저녁이 되자 사람들의 뱃속에서 꼬르륵 소리가 나기 시작했습니다. 그곳은 마을에서 멀리 떨어진 외딴 광야였습니다. 주변에는 빵을 살 수 있는 가게도, 식당도 전혀 없었습니다. 서늘한 저녁 바람이 언덕 위로 불어왔습니다. 지친 사람들의 얼굴에 피로가 번졌습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_02.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-3">
+  <div class="page-number">3 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_03.png"
+           alt="페이지 3 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">예수님께서는 굶주리고 지친 무리를 바라보셨습니다. 그들의 형편을 불쌍히 여기는 마음이 가득하셨습니다. 예수님께서는 곁에 서 있던 제자 빌립을 돌아보셨습니다. 빌립의 믿음을 시험해 보시고자 조용히 물으셨습니다. 「우리가 어디에서 빵을 사서 이 많은 사람을 먹이겠느냐?」 예수님의 물음에 빌립은 깜짝 놀라 눈을 크게 떴습니다. 빌립은 눈앞에 가득한 군중을 둘러보았습니다. 그의 머릿속이 복잡해졌습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_03.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-4">
+  <div class="page-number">4 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_04.png"
+           alt="페이지 4 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">빌립은 재빨리 계산을 해보고는 고개를 절레절레 저었습니다. 「예수님, 이 사람들에게 빵을 아주 조금씩만 나누어 준다고 해도 엄청나게 많은 돈이 듭니다.」 빌립의 목소리에는 막막함이 묻어 있었습니다. 「우리에게는 그만한 돈도 없고, 이 광야에서 음식을 구할 수도 없습니다.」 곁에 서 있던 다른 제자들도 한숨을 내쉬었습니다. 이 거대한 무리를 먹이는 일은 불가능해 보였습니다. 모두의 얼굴에 근심의 그림자가 짙게 드리웠습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_04.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-5">
+  <div class="page-number">5 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_05.png"
+           alt="페이지 5 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">그때 다른 제자인 안드레가 한 어린아이의 손을 잡고 다가왔습니다. 아이의 손에는 소박한 작은 바구니가 들려 있었습니다. 안드레가 조심스럽게 입을 열었습니다. 「예수님, 여기 한 아이가 보리떡 다섯 개와 물고기 두 마리를 가지고 있습니다.」 안드레는 말을 잇다가 머뭇거렸습니다. 「하지만 이 많은 사람에게 이것이 무슨 소용이 있겠습니까?」 아이는 수줍은 표정으로 바구니를 품에 안고 있었습니다. 어른 한 사람의 끼니에도 턱없이 모자란 양이었습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_05.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-6">
+  <div class="page-number">6 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_06.png"
+           alt="페이지 6 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">아이가 내민 것은 가난한 사람들이 먹는 거친 보리빵이었습니다. 아이에게는 너무나 소중한 저녁 식사였습니다. 아이는 기꺼이 자신의 도시락을 예수님께 내밀었습니다. 예수님께서는 아이의 맑은 눈망울을 내려다보셨습니다. 작은 것을 아낌없이 바친 아이의 예쁜 마음을 보셨습니다. 예수님의 얼굴에 환한 미소가 번졌습니다. 주님께서는 그 작은 도시락을 깊이 기뻐하셨습니다. 아무도 주목하지 않던 작은 선물이 주님의 손에 전해졌습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_06.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-7">
+  <div class="page-number">7 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_07.png"
+           alt="페이지 7 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">예수님께서는 제자들에게 사람들을 앉히라고 말씀하셨습니다. 「사람들을 푸른 풀밭 위에 무리 지어 앉게 하여라.」 사람들은 어리둥절해하면서도 말씀에 순종했습니다. 오십 명씩, 백 명씩 줄을 지어 잔디 위에 옹기종기 자리를 잡았습니다. 웅성거리던 들판이 점차 고요해졌습니다. 사람들의 눈길이 언덕 위의 예수님께로 쏠렸습니다. 아무것도 없는 빈 들판에 질서와 기대감이 가득 찼습니다. 모두가 조용히 숨을 죽였습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_07.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-8">
+  <div class="page-number">8 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_08.png"
+           alt="페이지 8 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">예수님께서는 보리떡 다섯 개와 물고기 두 마리를 손에 드셨습니다. 그리고 고개를 들어 하늘을 우러러보셨습니다. 하나님 아버지께 온 마음으로 감사 기도를 드리셨습니다. 부족한 형편 속에서도 먼저 감사하신 것입니다. 기도가 끝나자 예수님께서는 빵을 떼어 제자들에게 건네주셨습니다. 그곳에 있던 모든 사람이 숨을 멈추고 지켜보았습니다. 광야의 침묵 속에서 놀라운 기적이 시작되고 있었습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_08.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-9">
+  <div class="page-number">9 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_09.png"
+           alt="페이지 9 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">제자들은 예수님께서 떼어 주시는 빵과 물고기를 바구니에 담아 사람들에게 날랐습니다. 그런데 참으로 신기한 일이 벌어졌습니다. 바구니에서 음식을 나누어 주어도 빵과 물고기가 줄어들지 않았습니다. 나누면 나눌수록 바구니에 음식이 샘솟듯 가득 찼습니다. 사람들은 따뜻한 빵과 물고기를 배부르게 먹었습니다. 굶주렸던 아이들도, 어른들도 모두 만족스럽게 미소를 지었습니다. 광야는 순식간에 풍성한 축제의 자리가 되었습니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_09.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-10">
+  <div class="page-number">10 / 10</div>
+  <div class="page-body">
+    <div class="page-figure">
+      <!-- A run stopped early by quota keeps its finished pages; hide the gap
+           rather than showing a broken-image icon over the story text. -->
+      <img src="images/page_10.png"
+           alt="페이지 10 그림"
+           onerror="this.style.display='none'">
+    </div>
+    <div class="page-content">
+      <p class="page-text">모든 사람이 배불리 먹은 뒤 예수님께서 말씀하셨습니다. 「남은 조각을 다 모아서 하나도 버리지 않도록 하여라.」 제자들이 들판을 다니며 남은 빵과 물고기를 모았습니다. 놀랍게도 거두어들인 음식이 큰 바구니 열두 개에 가득 찼습니다. 어린아이의 작은 도시락 하나가 예수님의 손에 들렸을 때 셀 수 없이 많은 사람을 채우고도 넘쳤습니다. 주님께서는 우리의 작은 정성을 통해 가장 크고 풍성한 사랑의 기적을 베풀어 주십니다.</p>
+      
+      <audio controls preload="none">
+        <source src="audio/page_10.mp3" type="audio/mpeg">
+      </audio>
+      
+    </div>
+  </div>
+</div>
+
+
+<!-- 부모용 요약 -->
+<div class="parents-section">
+  <details>
+    <summary>📋 부모님을 위한 설교 말씀 분석 보기</summary>
+    <div class="parents-content"><h2>1. 본문과 배경</h2>
+<p>요한복음 6장에 기록된 오병이어 기적은 사복음서 모두에 유일하게 공통으로 수록된 중요한 표적입니다. 유월절이 가까운 시기에, 예수님은 갈릴리 호수 건너편 벳새다 인근 산으로 가셨습니다. 그곳까지 수많은 사람이 예수님의 기적과 가르침을 사모하며 따라왔습니다. 유월절 명절이라는 시기적 배경은 구약의 출애굽 당시 광야에서 만나를 내려주셨던 하나님의 공급을 떠올리게 하며, 예수님이 바로 생명의 떡이심을 증거하는 문맥 속에 위치합니다.</p>
+<h2>2. 본문의 흐름</h2>
+<p>이야기는 광야 산비탈에 모여든 거대한 무리와 날이 저물어가는 현실적 한계에서 시작됩니다. 예수님은 지친 무리를 긍휼히 보시며 빌립을 시험하십니다. 빌립은 이성적인 계산을 앞세워 불가능을 토로하지만, 안드레는 한 어린아이가 가져온 소박한 보리떡 다섯 개와 물고기 두 마리를 예수님께 데려옵니다. 어린아이의 자발적 헌신을 받으신 예수님은 하늘을 우러러 축사하시고, 남자만 오천 명이 넘는 무리를 배불리 먹이신 후 열두 광주리가 남게 하시는 풍성한 생명의 역사를 일으키십니다.</p>
+<h3>그래서 나는 어떻게 해야 하는가</h3>
+<p>이번 주에 나는 내 손에 든 자원의 부족함을 보며 낙심하거나 계산에만 매몰되지 않고, 아주 작고 초라해 보이는 시간과 물질, 기도의 마음이라도 주님의 손에 온전히 올려드리는 순종을 시작하겠습니다. 자녀 앞에서 상황의 어려움을 한탄하기보다, 나의 작은 헌신을 들어 풍성히 채우실 하나님을 신뢰하며 먼저 감사 기도를 드리는 본을 보이겠습니다.</p>
+<h2>3. 핵심 신학 개념</h2>
+<ul>
+<li><strong>목자 되신 하나님의 긍휼</strong>: 예수님은 영혼의 갈급함뿐 아니라 육신의 굶주림까지 세밀히 돌보시는 참된 목자이십니다.</li>
+<li><strong>참된 생명의 떡</strong>: 광야의 만찬은 장차 십자가에서 자기 몸을 내어주실 예수 그리스도가 영원한 생명의 떡이심을 예표합니다.</li>
+<li><strong>작은 자의 헌신과 은혜의 확장</strong>: 하나님 나라는 거대한 힘이 아니라, 가장 연약한 자의 순수한 내어놓음을 통해 풍성한 기적으로 확장됩니다.</li>
+</ul>
+<h2>4. 아이에게 전달할 핵심 메시지</h2>
+<ul>
+<li>예수님은 우리의 배고픔과 힘든 형편을 모른 척하지 않으시고 따뜻한 사랑으로 돌보아 주셔요.</li>
+<li>내가 가진 것이 아무리 작아 보여도, 예수님 손에 기쁘게 드리면 놀라운 사랑의 기적이 일어나요.</li>
+<li>하나님은 우리가 순종하여 드릴 때, 부족함 없이 넘치도록 채워주시는 풍성하신 분이에요.</li>
+</ul>
+<h2>5. 대화 질문 (부모-자녀)</h2>
+<ol>
+<li>수많은 사람이 배고파할 때, 왜 빌립은 불가능하다고 생각했고 어린아이는 자기 도시락을 내놓았을까요?</li>
+<li>나의 작은 도시락처럼, 오늘 내가 예수님과 이웃을 위해 나눌 수 있는 작은 것은 무엇이 있을까요?</li>
+<li>예수님이 빵을 나누어 주시기 전에 먼저 하나님께 감사 기도를 드리신 모습을 보며 어떤 마음이 드나요?</li>
+</ol></div>
+  </details>
+</div>
+
+<!-- 찬양 추천 -->
+
+<div class="parents-section">
+  <details>
+    <summary>🎵 말씀과 함께하는 찬양 추천</summary>
+    <div class="songs-content">
+      
+      <div class="song-item">
+        <div class="song-title">오병이어</div>
+        <div class="song-artist">히즈윌(HisWill)</div>
+        <div class="song-reason">자신의 작은 것을 주님께 온전히 드릴 때 기적으로 역사하시는 하나님의 은혜를 담담하고 깊이 있게 노래합니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%EC%98%A4%EB%B3%91%EC%9D%B4%EC%96%B4+%ED%9E%88%EC%A6%88%EC%9C%8C%28HisWill%29"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+      <div class="song-item">
+        <div class="song-title">내 모습 이대로</div>
+        <div class="song-artist">제이어스(J-US)</div>
+        <div class="song-reason">부족하고 연약한 모습 그대로 주님 앞에 나아가 순종할 때 주님이 기뻐 받으신다는 복음의 진리를 고백합니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%EB%82%B4+%EB%AA%A8%EC%8A%B5+%EC%9D%B4%EB%8C%80%EB%A1%9C+%EC%A0%9C%EC%9D%B4%EC%96%B4%EC%8A%A4%28J-US%29"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+      <div class="song-item">
+        <div class="song-title">작은 불꽃 하나가</div>
+        <div class="song-artist">올네이션스(All Nations)</div>
+        <div class="song-reason">작은 나눔과 헌신이 큰 사랑의 불꽃으로 번져 온 세상을 채우게 됨을 찬양합니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%EC%9E%91%EC%9D%80+%EB%B6%88%EA%BD%83+%ED%95%98%EB%82%98%EA%B0%80+%EC%98%AC%EB%84%A4%EC%9D%B4%EC%85%98%EC%8A%A4%28All+Nations%29"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+      <div class="song-item">
+        <div class="song-title">주가 일하시네</div>
+        <div class="song-artist">이혁진</div>
+        <div class="song-reason">내가 가진 작은 것을 신뢰함으로 내어놓을 때 비로소 하나님께서 친히 일하신다는 믿음의 결단을 돕습니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%EC%A3%BC%EA%B0%80+%EC%9D%BC%ED%95%98%EC%8B%9C%EB%84%A4+%EC%9D%B4%ED%98%81%EC%A7%84"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+      <div class="song-item">
+        <div class="song-title">선한 목자 되신 우리 주</div>
+        <div class="song-artist">어노인팅(Anointing)</div>
+        <div class="song-reason">광야 같은 세상에서 우리를 푸른 풀밭으로 인도하시며 배불리 먹이시는 예수님의 따뜻한 돌보심을 찬양합니다.</div>
+        <a href="https://www.youtube.com/results?search_query=%EC%84%A0%ED%95%9C+%EB%AA%A9%EC%9E%90+%EB%90%98%EC%8B%A0+%EC%9A%B0%EB%A6%AC+%EC%A3%BC+%EC%96%B4%EB%85%B8%EC%9D%B8%ED%8C%85%28Anointing%29"
+           target="_blank" class="song-youtube">YouTube에서 찾기 →</a>
+      </div>
+      
+    </div>
+  </details>
+</div>
+
+
+<!-- 푸터 -->
+<div class="footer">
+  <p>성경 본문 참조: 대한성서공회 —
+    <a href="https://www.bskorea.or.kr" target="_blank">www.bskorea.or.kr</a>
+  </p>
+  <p style="margin-top:8px;">본문 위치: 요한복음 6:1-15</p>
+</div>
+
+</body>
+</html>
